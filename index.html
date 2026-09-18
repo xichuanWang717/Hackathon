@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>智能排产指挥台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-mark">AI</div>
+        <div class="brand-name">智能排产<br /><span>指挥台</span></div>
+        <nav class="nav" aria-label="主导航">
+          <button class="nav-item active" data-page="dashboard"><span>◈</span> 指挥总览</button>
+          <button class="nav-item" data-page="schedule"><span>▤</span> 智能排产</button>
+          <button class="nav-item" data-page="orders"><span>□</span> 订单中心</button>
+          <button class="nav-item" data-page="risks"><span>△</span> 风险预警</button>
+          <button class="nav-item" data-page="reschedule"><span>↻</span> 重排推演</button>
+          <button class="nav-item" data-page="machines"><span>⌘</span> 设备态势</button>
+          <button class="nav-item" data-page="data"><span>⇅</span> 数据管理</button>
+        </nav>
+        <div class="sidebar-foot">V0.1 演示版<br />排产引擎待接入</div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">君威钢绳索具 · 全天连续生产</p>
+            <h1>生产指挥总览</h1>
+          </div>
+          <div class="header-actions">
+            <span class="live-dot">系统在线</span>
+            <span class="shift-tag">夜班 · 20:00–08:00</span>
+            <button id="themeToggle" class="icon-button" title="切换主题">☼</button>
+            <button id="simulateButton" class="primary-button">模拟紧急插单</button>
+          </div>
+        </header>
+
+        <div id="dashboardContent">
+        <section class="kpi-grid" aria-label="核心指标">
+          <button class="kpi-card" data-filter="all"><span>准时交付率</span><strong>92.4%</strong><em class="good">↑ 3.2%</em><small>目标 ≥ 90%</small></button>
+          <button class="kpi-card" data-filter="load"><span>产能利用率</span><strong>84.7%</strong><em class="info">+ 6.5%</em><small>109 台设备</small></button>
+          <button class="kpi-card" data-filter="congested"><span>拥堵设备</span><strong id="congestedCount">3</strong><em class="warning">需处理</em><small>高负荷或换型中</small></button>
+          <button class="kpi-card" data-filter="risk"><span>风险订单</span><strong id="riskCount">7</strong><em class="danger">2 张临近交期</em><small>点击查看处置建议</small></button>
+        </section>
+
+        <section class="command-grid">
+          <article class="panel twin-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">数字孪生</p><h2>工段设备态势</h2></div>
+              <div class="legend"><i class="normal"></i>生产 <i class="idle"></i>待排 <i class="change"></i>换型 <i class="risk"></i>风险</div>
+            </div>
+            <div id="plantMap" class="plant-map" aria-label="可点击的工段设备态势图"></div>
+          </article>
+
+          <article class="panel trend-panel">
+            <div class="panel-heading"><div><p class="eyebrow">全厂节拍</p><h2>产能与交付趋势</h2></div><span class="period">近 7 天</span></div>
+            <div class="trend-chart" aria-label="产能趋势示意图">
+              <div class="chart-lines"></div>
+              <div class="bars"><i style="--h:42%"></i><i style="--h:59%"></i><i style="--h:49%"></i><i style="--h:76%"></i><i style="--h:66%"></i><i style="--h:84%"></i><i style="--h:72%"></i></div>
+              <div class="chart-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>今日</span></div>
+            </div>
+            <div class="trend-footer"><span><b>2,860</b> 计划产出 kg</span><span><b>97.1%</b> 设备可用率</span></div>
+          </article>
+        </section>
+
+        <section class="panel gantt-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">实时排程</p><h2>设备甘特图</h2></div>
+            <div class="view-switch"><button class="selected">设备视角</button><button>订单视角</button><button>12 小时</button></div>
+          </div>
+          <div class="gantt-header"><span>设备 / 工序</span><span>20:00</span><span>22:00</span><span>00:00</span><span>02:00</span><span>04:00</span><span>06:00</span><span>08:00</span></div>
+          <div id="ganttRows" class="gantt-rows"></div>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="panel risks-panel"><div class="panel-heading"><div><p class="eyebrow">需人工确认</p><h2>风险预警</h2></div><button class="text-button">查看全部</button></div><div id="riskList" class="risk-list"></div></article>
+          <article class="panel orders-panel"><div class="panel-heading"><div><p class="eyebrow">订单池</p><h2>优先订单</h2></div><button class="text-button">订单中心</button></div><div id="ordersTable" class="orders-table"></div></article>
+        </section>
+        </div>
+        <section id="moduleView" class="module-view" hidden></section>
+      </main>
+
+      <aside class="assistant-panel" id="assistantPanel">
+        <div class="assistant-top"><div class="assistant-icon">✦</div><div><p>排产决策助手</p><span>约束可解释 · 人工可确认</span></div></div>
+        <div id="assistantContent" class="assistant-content"></div>
+        <button id="lockTask" class="assistant-action">锁定当前安排</button>
+      </aside>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
