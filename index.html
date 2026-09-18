@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>智能排产指挥台</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=33" />
   </head>
   <body>
     <div class="app-shell">
@@ -39,10 +39,10 @@
 
         <div id="dashboardContent">
         <section class="kpi-grid" aria-label="核心指标">
-          <button class="kpi-card" data-filter="all"><span>准时交付率</span><strong>92.4%</strong><em class="good">↑ 3.2%</em><small>目标 ≥ 90%</small></button>
-          <button class="kpi-card" data-filter="load"><span>产能利用率</span><strong>84.7%</strong><em class="info">+ 6.5%</em><small>109 台设备</small></button>
-          <button class="kpi-card" data-filter="congested"><span>拥堵设备</span><strong id="congestedCount">3</strong><em class="warning">需处理</em><small>高负荷或换型中</small></button>
-          <button class="kpi-card" data-filter="risk"><span>风险订单</span><strong id="riskCount">7</strong><em class="danger">2 张临近交期</em><small>点击查看处置建议</small></button>
+          <button class="kpi-card" data-filter="all"><span>准时交付率</span><strong id="onTimeRate">92.4%</strong><em class="good" id="onTimeDelta">↑ 3.2%</em><small>目标 ≥ 90%</small></button>
+          <button class="kpi-card" data-filter="load"><span>产能利用率</span><strong id="utilRate">84.7%</strong><em class="info" id="utilDelta">+ 6.5%</em><small id="deviceTotal">109 台设备</small></button>
+          <button class="kpi-card" data-filter="congested"><span>拥堵设备</span><strong id="congestedCount">3</strong><em class="warning" id="congestedNote">需处理</em><small>高负荷或换型中</small></button>
+          <button class="kpi-card" data-filter="risk"><span>风险订单</span><strong id="riskCount">7</strong><em class="danger" id="riskDelta">2 张临近交期</em><small>点击查看处置建议</small></button>
         </section>
 
         <section class="command-grid">
@@ -70,15 +70,15 @@
         <section class="panel gantt-panel">
           <div class="panel-heading">
             <div><p class="eyebrow">实时排程</p><h2>设备甘特图</h2></div>
-            <div class="view-switch"><button class="selected">设备视角</button><button>订单视角</button><button>12 小时</button></div>
+            <div class="view-switch" id="ganttSwitch"><button class="selected" data-gantt-view="machine" type="button">设备视角</button><button data-gantt-view="order" type="button">订单视角</button><button data-gantt-risk="1" type="button">仅看风险</button></div>
           </div>
           <div class="gantt-header"><span>设备 / 工序</span><span>20:00</span><span>22:00</span><span>00:00</span><span>02:00</span><span>04:00</span><span>06:00</span><span>08:00</span></div>
           <div id="ganttRows" class="gantt-rows"></div>
         </section>
 
         <section class="bottom-grid">
-          <article class="panel risks-panel"><div class="panel-heading"><div><p class="eyebrow">需人工确认</p><h2>风险预警</h2></div><button class="text-button">查看全部</button></div><div id="riskList" class="risk-list"></div></article>
-          <article class="panel orders-panel"><div class="panel-heading"><div><p class="eyebrow">订单池</p><h2>优先订单</h2></div><button class="text-button">订单中心</button></div><div id="ordersTable" class="orders-table"></div></article>
+          <article class="panel risks-panel"><div class="panel-heading"><div><p class="eyebrow">需人工确认</p><h2>风险预警</h2></div><button class="text-button" data-goto="risks" type="button">查看全部</button></div><div id="riskList" class="risk-list"></div></article>
+          <article class="panel orders-panel"><div class="panel-heading"><div><p class="eyebrow">订单池</p><h2>优先订单</h2></div><button class="text-button" data-goto="orders" type="button">订单中心</button></div><div id="ordersTable" class="orders-table"></div></article>
         </section>
         </div>
         <section id="moduleView" class="module-view" hidden></section>
@@ -91,7 +91,8 @@
       </aside>
     </div>
     <div id="toast" class="toast" role="status"></div>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-    <script src="./app.js"></script>
+    <script src="./three.min.js"></script>
+    <script src="./xlsx.full.min.js"></script>
+    <script src="./app.js?v=41"></script>
   </body>
 </html>

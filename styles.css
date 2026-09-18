@@ -86,3 +86,155 @@ body.light .schedule-gantt-head,body.light .schedule-gantt-row>b,body.light .cha
 .manual-insert-card{margin-top:15px}.manual-insert-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);gap:22px}.manual-insert-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.manual-insert-form label{display:grid;gap:5px;color:var(--ink-muted);font-size:13px}.manual-insert-form label:nth-child(8){grid-column:1/-1}.manual-insert-form input,.manual-insert-form select,.manual-insert-form textarea{width:100%;border:1px solid var(--line);border-radius:6px;background:var(--surface3);color:var(--ink);padding:9px 10px;font:inherit}.manual-insert-form textarea{resize:vertical}.manual-insert-form .primary-button{grid-column:1/-1;justify-self:start}.manual-insert-guide{padding:14px 15px;border-left:3px solid #4da6c6;background:rgba(66,152,184,.08);border-radius:0 7px 7px 0}.manual-insert-guide h3{margin:0 0 8px;font-size:15px;color:var(--ink-strong)}.manual-insert-guide ol{margin:0 0 12px;padding-left:20px;color:var(--ink-muted);font-size:13px;line-height:1.7}.manual-template-example{display:grid;gap:6px;color:var(--ink-muted);font-size:12px}.manual-template-example code{display:block;white-space:normal;overflow-wrap:anywhere;padding:8px;background:var(--surface);border:1px solid var(--line);border-radius:5px;color:var(--ink);line-height:1.5}.manual-insert-result{display:grid;gap:4px;margin-top:15px;padding:12px 14px;border:1px solid #55b88c;border-left:4px solid #32a86f;border-radius:7px;background:rgba(74,190,135,.1);color:var(--ink)}.manual-insert-result[hidden]{display:none}.manual-insert-result b{color:var(--ink-strong)}.manual-insert-result small{color:var(--ink-muted)}body.light .manual-insert-form label,body.light .manual-insert-guide ol,body.light .manual-template-example,body.light .manual-insert-result small{color:#000!important}body.light .manual-insert-guide h3,body.light .manual-insert-result b{color:#000!important}@media(max-width:800px){.manual-insert-grid{grid-template-columns:1fr}.manual-insert-form{grid-template-columns:1fr}.manual-insert-form label:nth-child(8),.manual-insert-form .primary-button{grid-column:auto}}
 .factory-3d-legend{display:none!important}.factory-view-actions{display:flex;gap:7px;pointer-events:auto}.factory-view-actions button{border:1px solid #69b9ca;border-radius:6px;padding:7px 10px;background:#123b50;color:#fff;font-weight:700;cursor:pointer}.factory-view-actions button:hover{background:#1a5870}.plant-filter-menu{position:absolute;z-index:8;top:54px;right:16px;display:flex;align-items:center;gap:5px;padding:8px 9px;background:rgba(5,18,29,.95);border:1px solid #4f9db3;border-radius:7px;color:#eaf7fb;box-shadow:0 8px 24px rgba(0,0,0,.28)}.plant-filter-menu[hidden]{display:none!important}.plant-filter-menu b{font-size:12px;margin-right:4px}.plant-filter-menu button{border:1px solid #426b7d;border-radius:4px;background:transparent;color:#dceef4;padding:4px 7px;font-size:11px}.plant-filter-menu button.selected,.plant-filter-menu button:hover{background:#237ca1;color:#fff;border-color:#67c6dc}.factory-2d-empty{grid-column:1/-1;margin:10px 0;color:#000;font-size:13px}body.light .factory-view-actions button{background:#155075;color:#fff}body.light .plant-filter-menu{background:#fff;color:#000;border-color:#75aebf}body.light .plant-filter-menu button{color:#000;border-color:#8ebbc8}body.light .plant-filter-menu button.selected,body.light .plant-filter-menu button:hover{color:#fff;background:#237ca1}
 .plant-map-2d{height:auto!important;min-height:0!important;overflow:visible!important}.plant-map-2d .factory-3d-shell{height:auto;min-height:0;overflow:visible}.plant-map-2d .factory-2d-view{height:auto;min-height:0;overflow:visible;padding-bottom:22px}
+.drop-zone.dragging{border-color:var(--accent);background:rgba(54,158,226,.12);transform:scale(1.01)}
+.import-result{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);font-size:13px}.import-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.import-summary>div{padding:9px;border:1px solid var(--line);border-radius:6px;text-align:center}.import-summary b{display:block;font-size:20px}.import-summary span{font-size:11px;color:var(--ink-muted)}.import-issues{padding:9px;border-radius:6px;background:rgba(239,107,117,.1)}.import-issues strong{font-size:12px}.import-issues ul{margin:7px 0 0;padding-left:18px}.import-issues li{line-height:1.55}.import-rows{margin-top:12px;border-top:1px solid var(--line)}.import-row-head,.import-row{display:grid;grid-template-columns:90px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.import-row-head{font-weight:700;color:var(--ink-muted)}.import-row span:last-child{overflow-wrap:anywhere}.candidate-title{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-weight:700}.candidate-list{display:grid;gap:7px;margin-top:8px}.candidate-row{display:grid;grid-template-columns:1.5fr .6fr .9fr;align-items:center;gap:10px;text-align:left;padding:10px;border:1px solid var(--line);border-radius:7px;background:var(--surface-1);color:var(--ink-strong)}.candidate-row.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(54,158,226,.14)}.candidate-row b,.candidate-row small{display:block}.candidate-row small{font-size:11px;color:var(--ink-muted);margin-top:4px}.candidate-row strong{font-size:18px;color:var(--accent)}.candidate-row em{font-style:normal;font-size:12px;line-height:1.45}.candidate-actions{display:flex;gap:8px;margin-top:10px}.candidate-actions button{flex:1}.insert-kpi-compare{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:12px;padding:10px;border:1px solid var(--line);border-radius:7px;font-size:12px}.insert-kpi-compare b{color:var(--ink-strong)}.confirm-state{margin-top:10px;padding:9px;border-radius:6px;background:rgba(54,158,226,.1);font-size:12px}@media(max-width:760px){.import-summary{grid-template-columns:repeat(2,1fr)}.candidate-row{grid-template-columns:1fr}.candidate-actions{flex-direction:column}}
+
+/* ---- 场景配置与影响预演（重排推演页） ---- */
+.scenario-config{margin-top:15px}
+.scenario-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:13px;align-items:end;margin-top:15px}
+.scenario-form label{display:grid;gap:7px;font-size:13px;color:var(--muted)}
+.scenario-form select,.scenario-form input{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:9px 10px;font-size:13px;width:100%}
+.scenario-form button{height:38px;align-self:end}
+.scenario-result{margin-top:15px}
+.scenario-impact{border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--surface2)}
+.scenario-impact b{display:block;margin-bottom:9px;color:var(--ink-strong);font-size:15px}
+.scenario-impact ul{margin:0 0 9px;padding-left:20px;display:grid;gap:6px}
+.scenario-impact li{font-size:13px;line-height:1.55;color:var(--muted)}
+.scenario-impact li b{display:inline;font-size:13px}
+.scenario-impact small{display:block;font-size:12px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line);padding-top:9px}
+body.light .scenario-form label,body.light .scenario-impact li,body.light .scenario-impact small{color:#000!important}
+body.light .scenario-impact b{color:#000!important}
+body.light .scenario-form select,body.light .scenario-form input{color:#000!important}
+@media(max-width:760px){.scenario-form{grid-template-columns:1fr}}
+
+/* ---- AI 服务不可用时的排查引导卡 ---- */
+.ai-advice-error{border-color:#8a6a2a!important}
+.ai-advice-error h3{color:#e8b563}
+.ai-advice-steps{margin:10px 0 12px;padding-left:22px;display:grid;gap:7px}
+.ai-advice-steps li{font-size:13px;line-height:1.6;color:var(--ink-muted)}
+.ai-advice-steps code{background:var(--surface3);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:12px;word-break:break-all}
+.ai-retry{align-self:flex-start;background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--ink-strong);padding:8px 16px;font-size:14px;cursor:pointer}
+body.light .ai-advice-error h3{color:#8a5a00!important}
+body.light .ai-advice-steps li{color:#000!important}
+body.light .ai-retry{color:#000!important}
+
+/* ---- 夜间护眼提示条 ---- */
+.eye-care-notice{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:min(680px,92vw);padding:14px 18px;border:1px solid #3a6f52;border-radius:10px;background:#12301f;color:#d8f0e2;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.eye-care-notice button{border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;border:1px solid transparent}
+.eye-care-notice #eyeCareYes{background:#43a06a;color:#fff}
+.eye-care-notice #eyeCareNo{background:transparent;border-color:#3a6f52;color:#d8f0e2}
+body.light .eye-care-notice{background:#eaf6ee;color:#0d3b22;border-color:#9ccdb0}
+body.light .eye-care-notice #eyeCareNo{border-color:#9ccdb0;color:#0d3b22}
+
+/* ---- 可访问性：键盘焦点与减弱动效 ---- */
+:focus-visible{outline:2px solid #43a0d0;outline-offset:2px;border-radius:3px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ---- 约束依据列表（助手面板，来自后端 constraint_trace） ---- */
+.trace-list{margin:10px 0 0;padding-left:18px;display:grid;gap:7px}
+.trace-list li{font-size:13px;line-height:1.55;color:var(--ink-muted)}
+.trace-list li b{color:var(--accent);font-size:12px;margin-right:4px}
+.trace-list li em{font-style:normal;color:#e8b563;font-size:12px;margin-left:4px}
+.constraint.muted{color:var(--ink-muted);border-style:dashed;opacity:.85}
+body.light .trace-list li{color:#000!important}
+body.light .trace-list li em{color:#8a5a00}
+body.light .constraint.muted{color:#385d71!important}
+
+/* ---- 设备选中态：覆盖二维矩阵与设备态势列表 ---- */
+.factory-2d-machine.selected-machine,.machine-record.selected-machine{outline:2px solid #43a0d0;outline-offset:2px}
+body.light .factory-2d-machine.selected-machine,body.light .machine-record.selected-machine{outline-color:#0a5c8a}
+
+/* ============================================================
+   浅色模式按钮对比度修复（目标 WCAG ≥ 4.5:1）
+   根因：`body.light .app-shell :is(...button...)` 特异性 (0,3,2)，
+        压过了按钮自身配色 —— 深底按钮被染成黑字，浅底按钮却保留白字。
+   做法：为每个控件显式声明「前景 + 背景」成对值，特异性对齐并置后生效。
+   ============================================================ */
+
+/* 1) 主操作按钮：深蓝渐变 + 白字（两种主题一致）
+      原来在 .scenario / .filter-row 容器里被改成浅底，白字几乎看不见（比值 1.10） */
+button.primary-button,button.assistant-action,
+body.light .app-shell button.primary-button,
+body.light .app-shell button.assistant-action{
+  background:linear-gradient(90deg,#0d5a9e,#156ba8)!important;
+  color:#fff!important;
+  border:0!important;
+}
+
+/* 2) 三维视图工具栏：深蓝底必须配白字（原来被染成黑字，比值 2.44） */
+body.light .app-shell .factory-view-actions button{
+  background:#155075!important;
+  color:#fff!important;
+  border-color:#4f92b5!important;
+}
+body.light .app-shell .factory-view-actions button:hover{background:#1c6a94!important}
+
+/* 3) AI 排产顾问入口：浅色下加深渐变，保证白字可读 */
+body.light .app-shell .ai-assistant-cta{
+  background:linear-gradient(90deg,#4b3ba8,#1c6fb5)!important;
+  color:#fff!important;
+}
+
+/* 4) 数据管理拖拽区提示文字（原 #73bfe6 配白底，比值 1.92） */
+body.light .app-shell .drop-zone{color:#1d5e85!important}
+
+/* 5) 侧栏底部版本信息（原 #7890a1 配白底，比值 3.26） */
+body.light .app-shell .sidebar-foot{color:#48636f!important}
+
+/* 6) 甘特任务条：白字配浅色渐变不达标
+      → 运行/风险条加深渐变；换型条改用深色字（琥珀底配深字是行业惯例） */
+.task.normal,.plan-task.running{background:linear-gradient(90deg,#0d5a9e,#156ba8)}
+.task.risk,.plan-task.risk{background:linear-gradient(90deg,#8f2436,#b8394c)}
+.task.change,.plan-task.setup{background:linear-gradient(90deg,#e0a63f,#f2c877);color:#3a2600!important}
+.chart-legend .running{background:#0d5a9e}
+.chart-legend .setup{background:#e0a63f}
+.chart-legend .risk{background:#8f2436}
+
+/* 7) 场景卡与数据管理里的普通按钮：浅底深字，一并锁死 */
+body.light .app-shell .scenario button:not(.primary-button),
+body.light .app-shell .source-list button,
+body.light .app-shell .filter-row button:not(.primary-button):not(.selected),
+body.light .app-shell .form-list button:not(.primary-button){
+  background:#e7f0f5!important;
+  color:#12303f!important;
+  border-color:#b9d3df!important;
+}
+
+/* ---- 对比度修复 · 第二遍 ----
+   第一遍把深底换成合格色后，`body.light .app-shell :is(...)` 的黑色文字规则
+   又给这些深底配上了黑字，这里按同等特异性补回白色前景。
+   （本块追加在文件末尾，同特异性时后出现的生效） */
+
+/* 甘特条：运行/风险条深底 → 白字 */
+body.light .app-shell span.plan-task.running,
+body.light .app-shell span.plan-task.risk,
+body.light .app-shell button.task.normal,
+body.light .app-shell button.task.risk{color:#fff!important}
+/* 甘特条：换型条浅琥珀底 → 深字（两种主题一致） */
+.task.change,body.light .app-shell button.task.change{color:#3a2600!important}
+
+/* AI 入口：深紫蓝渐变 → 白字 */
+body.light .app-shell button.ai-assistant-cta{color:#fff!important}
+
+/* 夜间提示条的主按钮：加深绿色以保证白字可读（原比值 3.24） */
+.eye-care-notice #eyeCareYes{background:#2e7a4d!important;color:#fff!important}
+
+/* ---- 对比度修复 · 第三遍（深色模式） ----
+   AI 入口的浅紫蓝渐变即使在深色主题下也不够深（白字比值 2.89），统一加深。
+   风险色 #ef6b75 在深色面板上为 4.31，略低于 4.5，深色下提亮一档。 */
+.ai-assistant-cta{background:linear-gradient(90deg,#4b3ba8,#1c6fb5)!important}
+body:not(.light) .danger{color:#f7919a!important}
+
+/* ---- 对比度修复 · 第四遍（交互态） ----
+   前几遍只覆盖了默认状态。用「把 :hover 改写成 class」的方式模拟悬停后发现：
+   浅色模式下只有 `.nav-item:hover` 是深底（#173d5d），却被黑色文字规则染成黑字（比值 1.86）。
+   根因：`.nav-item:hover,.nav-item.active` 只有一套深色主题的配色，浅色主题缺少对应规则。
+   补上浅色主题的悬停/聚焦态（与浅色下 .active 的浅蓝底深字保持同一语言）。 */
+body.light .app-shell .nav-item:hover:not(.active),
+body.light .app-shell .nav-item:focus-visible:not(.active){
+  background:#e3f2fb!important;
+  color:#0c2d40!important;
+}
+body.light .app-shell .nav-item:hover:not(.active) span{color:#0c2d40!important}
