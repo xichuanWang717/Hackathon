@@ -33,7 +33,7 @@
             <span class="live-dot">系统在线</span>
             <span class="shift-tag">夜班 · 20:00–08:00</span>
             <button id="themeToggle" class="icon-button" title="切换主题">☼</button>
-            <button id="simulateButton" class="primary-button">模拟紧急插单</button>
+            <button id="aiAssistantButton" class="ai-assistant-cta">AI排产顾问</button><button id="manualInsertButton" class="manual-insert-cta">人工调序</button><button id="simulateButton" class="primary-button">模拟紧急插单</button>
           </div>
         </header>
 
@@ -56,7 +56,9 @@
 
           <article class="panel trend-panel">
             <div class="panel-heading"><div><p class="eyebrow">全厂节拍</p><h2>产能与交付趋势</h2></div><span class="period">近 7 天</span></div>
-            <div class="trend-chart" aria-label="产能趋势示意图">
+            <div class="trend-chart" aria-label="近 7 天计划产出柱状图，单位为千克">
+              <div class="trend-unit">产出（kg）</div>
+              <div class="trend-scale"><span>3,200</span><span>2,400</span><span>1,600</span><span>800</span><span>0</span></div>
               <div class="chart-lines"></div>
               <div class="bars"><i style="--h:42%"></i><i style="--h:59%"></i><i style="--h:49%"></i><i style="--h:76%"></i><i style="--h:66%"></i><i style="--h:84%"></i><i style="--h:72%"></i></div>
               <div class="chart-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>今日</span></div>
@@ -83,12 +85,13 @@
       </main>
 
       <aside class="assistant-panel" id="assistantPanel">
-        <div class="assistant-top"><div class="assistant-icon">✦</div><div><p>排产决策助手</p><span>约束可解释 · 人工可确认</span></div></div>
+        <div class="assistant-top"><div class="assistant-icon">✦</div><div><p>DeepSeek V4 · AI排产顾问</p><span>算法引擎主导 · AI策略建议 · 人工可确认</span></div></div>
         <div id="assistantContent" class="assistant-content"></div>
         <button id="lockTask" class="assistant-action">锁定当前安排</button>
       </aside>
     </div>
     <div id="toast" class="toast" role="status"></div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
