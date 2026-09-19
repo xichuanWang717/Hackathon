@@ -308,7 +308,7 @@ body.light .an-report-col li{color:#385d71!important}
 /* ---- 顶部固定：仅顶栏在滚动时保持可见（标题 + 操作按钮）
    背景必须完全不透明，否则滚动时下层内容透出。
    KPI 行不固定，随内容一起滚动（用户反馈）。 */
-.topbar{
+body.is-dashboard .topbar{
   position:sticky;
   top:0;
   z-index:30;
@@ -318,7 +318,7 @@ body.light .an-report-col li{color:#385d71!important}
 }
 /* 伪元素向上延伸背景，盖住 workspace 的 padding（27px 上 + 22px 左右），
    避免滚动时顶栏上方/两侧露出一条透出下层的空隙（负 margin 在 sticky 上不生效） */
-.topbar::before{
+body.is-dashboard .topbar::before{
   content:'';
   position:absolute;
   top:-27px;
@@ -328,3 +328,6 @@ body.light .an-report-col li{color:#385d71!important}
   background:inherit;
 }
 body.light .topbar{background:#edf4f8}
+
+/* ---- 顶栏只在指挥总览页显示，其他页面完全隐藏（用户需求） ---- */
+body:not(.is-dashboard) .topbar{display:none}
