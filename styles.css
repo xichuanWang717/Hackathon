@@ -238,3 +238,93 @@ body.light .app-shell .nav-item:focus-visible:not(.active){
   color:#0c2d40!important;
 }
 body.light .app-shell .nav-item:hover:not(.active) span{color:#0c2d40!important}
+
+/* ---- 完工归档页 ---- */
+.archive-pending>div{grid-template-columns:1.35fr 1.3fr .7fr 1fr .9fr!important}
+.archive-table>div{grid-template-columns:1.2fr 1.2fr .95fr 1fr .65fr .5fr 1.3fr .55fr!important}
+.archive-go{padding:6px 12px!important;font-size:13px!important}
+.archive-undo{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--ink-strong);padding:6px 12px;font-size:13px;cursor:pointer}
+.archive-meta{font-size:12px;color:var(--muted)}
+.archive-form{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.archive-form-inner{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.archive-form-inner b{color:var(--ink-strong);font-size:15px}
+.archive-form-inner span{font-size:13px;color:var(--muted)}
+.archive-form-inner label{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.archive-form-inner input{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:8px 10px;font-size:13px}
+.archive-form-inner small{flex-basis:100%;font-size:12px;line-height:1.55;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+body.light .archive-form-inner b,body.light .archive-form-inner span,body.light .archive-form-inner label,body.light .archive-form-inner small,body.light .archive-meta{color:#000!important}
+body.light .archive-form-inner input{color:#000!important;background:#fff!important}
+body.light .archive-undo{color:#000!important;background:#e7f0f5!important}
+@media(max-width:900px){.archive-form-inner{flex-direction:column;align-items:stretch}}
+
+/* ---- 助手面板图标：白字配浅紫蓝渐变仅 3.02，压深渐变到 4.5 以上 ---- */
+.assistant-icon{background:linear-gradient(145deg,#5b45b8,#1c6fa8)!important}
+
+/* ---- 数据分析页（加分项） ----
+   图表规范（dataviz）：利用率/分布/Top 都是 magnitude → 单色顺序蓝；
+   文本用 ink 变量不用系列色；图例/表格视图兜底。 */
+.an-svg{width:100%;height:auto;display:block}
+.an-svg .an-tick{font-size:11px;fill:var(--muted)}
+.an-svg .an-val{font-size:11px;fill:var(--ink-strong);font-weight:600}
+.an-hint{font-size:12px;color:var(--muted);display:block;margin-top:4px}
+.an-proc-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.an-proc{background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:16px;text-align:center}
+.an-proc b{font-size:30px;display:block;color:var(--ink-strong)}
+.an-proc span{font-size:14px;color:var(--muted)}
+.an-proc small{font-size:12px;color:var(--muted)}
+.an-proc-low b{color:#e8b563}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}
+.an-reason-table{overflow-x:auto}
+.an-reason-table .data-head,.an-reason-table .order-data{grid-template-columns:.9fr 1.6fr 1.5fr;min-width:620px}
+.an-reason-title{font-weight:700;color:var(--ink-strong)}
+.an-quality-summary{grid-template-columns:repeat(3,1fr)}
+.an-src-note{padding-top:4px;font-style:italic}
+body.light .an-svg .an-val{fill:#000!important}
+body.light .an-proc b,body.light .an-reason-title{color:#000!important}
+body.light .an-proc-low b{color:#8a5a00!important}
+body.light .an-svg .an-tick{fill:#385d71!important}
+body.light .an-proc span,body.light .an-proc small,body.light .an-hint{color:#385d71!important}
+@media(max-width:900px){.analysis-grid{grid-template-columns:1fr}.an-proc-row{grid-template-columns:1fr}.an-quality-summary{grid-template-columns:repeat(2,1fr)}}
+
+/* 系列色：默认深色主题用暗面值，浅色主题用亮面值（单色顺序蓝） */
+.analysis-root,.app-shell{--an-blue:#3987e5}
+body.light .app-shell{--an-blue:#2a78d6}
+
+/* ---- 质量明细表：5 列（原 .order-data 是 6 列 grid，会错位） ---- */
+.an-quality-table .data-head,.an-quality-table .order-data{grid-template-columns:.7fr 1fr .6fr 1.6fr 1.6fr;min-width:680px}
+/* SVG 文字用 fill 不用 color；浅色主题下 fill 跟随 --ink-strong/--muted 已是深色，无需额外覆盖 */
+
+/* ---- 分析报告执行摘要 ---- */
+.an-report-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:14px}
+.an-report-col h3{font-size:15px;margin:0 0 10px;color:var(--ink-strong);font-weight:700}
+.an-report-col ol,.an-report-col ul{margin:0;padding-left:20px;display:grid;gap:9px}
+.an-report-col li{font-size:14px;line-height:1.65;color:var(--muted)}
+.an-report-col li b{color:var(--ink-strong)}
+.an-report-meta{padding-top:14px;margin-top:16px;border-top:1px solid var(--line);line-height:1.7}
+body.light .an-report-col h3,body.light .an-report-col li b{color:#000!important}
+body.light .an-report-col li{color:#385d71!important}
+@media(max-width:900px){.an-report-body{grid-template-columns:1fr}}
+
+/* ---- 顶部固定：仅顶栏在滚动时保持可见（标题 + 操作按钮）
+   背景必须完全不透明，否则滚动时下层内容透出。
+   KPI 行不固定，随内容一起滚动（用户反馈）。 */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:#08131f;
+  padding:14px 0 12px;
+  margin-bottom:12px;
+}
+/* 伪元素向上延伸背景，盖住 workspace 的 padding（27px 上 + 22px 左右），
+   避免滚动时顶栏上方/两侧露出一条透出下层的空隙（负 margin 在 sticky 上不生效） */
+.topbar::before{
+  content:'';
+  position:absolute;
+  top:-27px;
+  left:-22px;
+  right:-22px;
+  height:27px;
+  background:inherit;
+}
+body.light .topbar{background:#edf4f8}
