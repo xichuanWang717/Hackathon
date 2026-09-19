@@ -3,26 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 开发期禁用页面缓存：HTML 本身没有版本号参数，改版后浏览器会一直拿旧副本 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>智能排产指挥台</title>
-    <link rel="stylesheet" href="./styles.css?v=33" />
+    <link rel="icon" type="image/png" href="./jwgs-logo.png?v=2" />
+    <link rel="stylesheet" href="./styles.css?v=54" />
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar">
-        <div class="brand-mark">AI</div>
+        <div class="brand-mark" title="君威钢绳索具"><img src="./jwgs-logo.png?v=2" alt="君威钢绳索具" /></div>
         <div class="brand-name">智能排产<br /><span>指挥台</span></div>
         <nav class="nav" aria-label="主导航">
-          <button class="nav-item active" data-page="dashboard"><span>◈</span> 指挥总览</button>
-          <button class="nav-item" data-page="schedule"><span>▤</span> 智能排产</button>
-          <button class="nav-item" data-page="orders"><span>□</span> 订单中心</button>
-          <button class="nav-item" data-page="risks"><span>△</span> 风险预警</button>
-          <button class="nav-item" data-page="reschedule"><span>↻</span> 重排推演</button>
-          <button class="nav-item" data-page="archive"><span>☑</span> 完工归档</button>
-          <button class="nav-item" data-page="analysis"><span>▦</span> 数据分析</button>
-          <button class="nav-item" data-page="machines"><span>⌘</span> 设备态势</button>
-          <button class="nav-item" data-page="data"><span>⇅</span> 数据管理</button>
+          <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span><span class="nav-label">指挥总览</span></button>
+          <button class="nav-item" data-page="data"><span class="nav-icon">⇅</span><span class="nav-label">数据管理</span></button>
+          <button class="nav-item" data-page="machines"><span class="nav-icon">⌘</span><span class="nav-label">设备态势</span></button>
+          <button class="nav-item" data-page="orders"><span class="nav-icon">□</span><span class="nav-label">订单中心</span></button>
+          <button class="nav-item" data-page="schedule"><span class="nav-icon">▤</span><span class="nav-label">智能排产</span></button>
+          <button class="nav-item" data-page="risks"><span class="nav-icon">△</span><span class="nav-label">风险预警</span></button>
+          <button class="nav-item" data-page="reschedule"><span class="nav-icon">↻</span><span class="nav-label">重排推演</span></button>
+          <button class="nav-item" data-page="archive"><span class="nav-icon">☑</span><span class="nav-label">完工归档</span></button>
+          <button class="nav-item" data-page="analysis"><span class="nav-icon">▦</span><span class="nav-label">数据分析</span></button>
         </nav>
-        <div class="sidebar-foot">V0.1 演示版<br />排产引擎待接入</div>
+        <div class="sidebar-foot">设备 — 台 · 排程 — 条</div>
       </aside>
 
       <main class="workspace">
@@ -35,8 +40,23 @@
             <span class="live-dot">系统在线</span>
             <span class="shift-tag">夜班 · 20:00–08:00</span>
             <button id="themeToggle" class="icon-button" title="切换主题">☼</button>
-            <button id="aiAssistantButton" class="ai-assistant-cta">AI排产顾问</button><button id="manualInsertButton" class="manual-insert-cta">人工调序</button><button id="simulateButton" class="primary-button">模拟紧急插单</button>
+            <button id="aiAssistantButton" class="ai-assistant-cta">AI排产顾问</button><button id="manualInsertButton" class="manual-insert-cta">人工调序</button><button id="rushInsertButton" class="primary-button" title="填写插单明细后由算法引擎重排">紧急插单</button>
           </div>
+          <!-- 顶部「产线状态岛」：嵌在吸顶顶栏下沿，常驻不随内容滚动。
+               默认紧凑（只有彩色圆环 + 圈内台数），悬停 / 键盘聚焦展开出状态名。
+               数字全部由 app.js 按真实数据渲染，这里不留任何写死的占位数字。 -->
+          <section class="status-island" id="statusIsland" tabindex="0" aria-label="产线设备状态与紧急提醒：静止态是一枚钢丝绳断面，悬停或聚焦展开各状态台数">
+            <div class="island-inner">
+              <!-- 常驻的「神虎 GT8 断面」：静止态**只有它**，居中浮在顶栏上沿。
+                   其余内容全在 .island-body 里，靠 max-width 0→大 展开/收起。 -->
+              <span class="island-rope" id="islandRope"></span>
+              <div class="island-body">
+                <span class="island-lead-txt">设备状态</span>
+                <div class="island-dots" id="islandDots"></div>
+                <button class="island-alert" id="islandAlert" type="button" hidden></button>
+              </div>
+            </div>
+          </section>
         </header>
 
         <div id="dashboardContent">
@@ -51,7 +71,9 @@
           <article class="panel twin-panel">
             <div class="panel-heading">
               <div><p class="eyebrow">数字孪生</p><h2>工段设备态势</h2></div>
-              <div class="legend"><i class="normal"></i>生产 <i class="idle"></i>待排 <i class="change"></i>换型 <i class="risk"></i>风险</div>
+              <!-- 状态图例由 app.js 按 STATUS_META 渲染，与顶部状态岛、三维图例共用同一份口径。
+             写死在 HTML 里的话，后端一换状态词表这里就会悄悄少一项。 -->
+        <div class="legend" id="statusLegend"></div>
             </div>
             <div id="plantMap" class="plant-map" aria-label="可点击的工段设备态势图"></div>
           </article>
@@ -95,6 +117,7 @@
     <div id="toast" class="toast" role="status"></div>
     <script src="./three.min.js"></script>
     <script src="./xlsx.full.min.js"></script>
-    <script src="./app.js?v=54"></script>
+    <script src="./app.js?v=70"></script>
+    <script src="./backend-bridge.js?v=3"></script>
   </body>
 </html>

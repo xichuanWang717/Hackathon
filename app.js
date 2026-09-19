@@ -16,7 +16,8 @@ const deviceIds = {
   合绳: ['8301','8302','8303','8304','8305','8306','8307','8308','8309','8310','8246','8312']
 };
 const defaultStateCycle = ['normal','normal','normal','normal','normal','idle','normal','change','normal','normal','idle','normal','normal','risk'];
-const makeMachine = (id, zone, index) => ({ id, zone, status: defaultStateCycle[index % defaultStateCycle.length], order: `JW-260918-${String(130 + index).padStart(3,'0')}`, product: zone === '拉丝' ? '镀锌钢丝' : zone === '捻股' ? '标准股型' : '标准钢丝绳', material: zone === '拉丝' ? '盘条 Q195' : '待模型接入', capacity: `${62 + (index * 7) % 30}%`, queue: 1 + index % 5, change: '待模型计算', risk: '无' });
+const riskReasons = ['队列拥堵', '高负荷待处理', '可能影响交期'];
+const makeMachine = (id, zone, index) => { const st = defaultStateCycle[index % defaultStateCycle.length]; return { id, zone, status: st, order: `JW-260918-${String(130 + index).padStart(3,'0')}`, product: zone === '拉丝' ? '镀锌钢丝' : zone === '捻股' ? '标准股型' : '标准钢丝绳', material: zone === '拉丝' ? '盘条 Q195' : '待模型接入', capacity: `${62 + (index * 7) % 30}%`, queue: 1 + index % 5, change: '待模型计算', risk: st === 'risk' ? riskReasons[index % riskReasons.length] : '无' }; };
 const specialById = Object.fromEntries(highlightedMachines.map(machine => [machine.id, machine]));
 // ↓ 以下四个数据源在接入后端时可被 window.applyBackendData(payload) 整体替换（见文件末尾）。
 //   未调用时保持这些内置演示数据，保证路演现场永远有画面。
@@ -38,10 +39,8 @@ let orders = [
   ['订单号','产品规格','数量','交期','状态'],['JW-260918-106','30mm GT34Z','1,600m','09/19 08:00','临期'],['JW-260918-111','22mm GT8ZH','2,000m','09/19 12:00','正常'],['JW-260918-118','12mm GT6Z','1,000m','09/19 16:00','换型中'],['JW-260918-126','28mm GT8PZ','2,000m','09/20 08:00','缺料风险']
 ];
 let selected = machines.find(m => m.id === '8304');
-let inserted = false;
 let backendKpiLocked = false;          // 后端 KPI 到达后，前端不再自行推算
 let lockedMachines = new Set();        // 人工锁定当前安排的设备（前端演示闭环）
-let insertSnapshot = null;             // 紧急插单推演前的快照，用于撤回
 let plantHighlightFn = null;           // 由 renderPlant 注入：高亮三维视图里选中的设备（canvas 无 DOM）
 
 // 完工归档记录（版本留痕）：orderId/spec/qty/due/completedAt/onTime/delayDays/archivedAt/tasks/risks
@@ -49,14 +48,52 @@ let plantHighlightFn = null;           // 由 renderPlant 注入：高亮三维�
 let archiveRecords = [];
 let importedDataset = {version:'内置演示数据', sheets:{}, rows:[], summary:{orders:0,devices:0,processes:0,materials:0}, issues:[]};
 const $ = selector => document.querySelector(selector);
-// DeepSeek V4 接口配置位：接入后端时只需替换 endpoint，并在服务端保存密钥。
-const aiConfig = {provider:'DeepSeek', model:'deepseek-v4-pro', endpoint:'http://localhost:3000/api/ai/schedule', enabled:true};
+// DeepSeek V4 接口配置位：endpoint 用相对路径（同源），网页部署在哪 AI 请求就发到哪。
+// 由 ai-server.js 一体化服务提供网页 + /api/ai/schedule，别人访问也能用 AI。
+// 密钥只存在服务端环境变量，不写进前端文件。
+const aiConfig = {provider:'DeepSeek', model:'deepseek-v4-pro', endpoint:'/api/ai/schedule', enabled:true};
+
+/* ============================================================
+   设备状态：全站唯一权威表
+   ------------------------------------------------------------
+   这张表是**唯一**的状态口径来源，下面 6 处全部由它派生，不再各写一份：
+     ① 三维数字孪生的机台配色（palette）
+     ② 三维图例、③ 三维筛选菜单
+     ④ 顶部状态岛（颜色 / 中文名 / 排序）
+     ⑤ 设备态势的筛选下拉与列表状态文字
+     ⑥ 甘特图配色
+   为什么必须统一：早前这几处各抄一份，后端一接进来就露馅 ——
+   后端实际用的是 normal / queued / idle / risk 4 种，
+   而前端表里没有 queued，24 台「已排产」被兜底并进「生产」，
+   于是状态岛写「生产 25」、点进去只筛出 1 台，两处数字当场打架。
+   现在未知状态不再被合并：见 statusMetaOf()，它会给未知 key 生成稳定的兜底色，
+   宁可多出一项也绝不把 A 类设备错记成 B 类。
+   ============================================================ */
+const STATUS_META = [
+  { key:'normal',      label:'生产',   short:'生产中',  color:'#57ca8c' },
+  { key:'queued',      label:'已排产', short:'已排产',  color:'#22b8c4' },
+  { key:'idle',        label:'待排',   short:'待排',    color:'#3a9cff' },
+  { key:'change',      label:'换型',   short:'换型中',  color:'#f0b65a' },
+  { key:'risk',        label:'风险',   short:'风险',    color:'#ef6b75' },
+  { key:'maintenance', label:'维护',   short:'维护中',  color:'#8a9aa8' },
+  { key:'fault',       label:'停机',   short:'故障停机', color:'#b3202e' },
+  { key:'disabled',    label:'停用',   short:'停用',    color:'#55606a' }
+];
+const STATUS_BY_KEY = Object.fromEntries(STATUS_META.map(s => [s.key, s]));
+// 未登记状态的稳定兜底色：哈希到一组与主色区分度尚可的备用色，同名 key 每次都得到同一个色
+const STATUS_FALLBACK_COLORS = ['#7f8fa6','#9a7fd0','#c98a4b','#4f9e8f','#b06f9a','#6f87c9'];
+function statusMetaOf(key){
+  if (STATUS_BY_KEY[key]) return STATUS_BY_KEY[key];
+  let h = 0;
+  for (let i = 0; i < String(key).length; i += 1) h = (h * 31 + String(key).charCodeAt(i)) >>> 0;
+  return { key, label:String(key), short:String(key), color:STATUS_FALLBACK_COLORS[h % STATUS_FALLBACK_COLORS.length], unknown:true };
+}
 
 function renderPlant(){
   const target = $('#plantMap');
   const zones = ['拉丝','捻股','合绳'];
-  const palette = {normal:0x57ca8c,idle:0x3a9cff,change:0xf0b65a,risk:0xef6b75};
-  target.innerHTML = `<div class="factory-3d-shell"><div class="factory-view-toolbar"><span>车间数字孪生</span><div class="factory-view-actions"><button class="plant-filter-toggle" type="button">筛选</button><button class="open-machines" type="button">打开设备态势</button><button class="factory-view-toggle" type="button">切换二维</button></div></div><div class="plant-filter-menu" hidden><b>设备状态</b><button type="button" data-status-filter="all">全部</button><button type="button" data-status-filter="normal">生产</button><button type="button" data-status-filter="idle">待排</button><button type="button" data-status-filter="change">换型</button><button type="button" data-status-filter="risk">风险</button></div><canvas class="factory-3d-canvas" aria-label="三层车间数字孪生设备图"></canvas><div class="factory-2d-view" hidden></div><div class="factory-3d-floor-labels"></div><div class="factory-3d-legend"><span><i class="normal"></i>生产</span><span><i class="idle"></i>待排</span><span><i class="change"></i>换型</span><span><i class="risk"></i>风险</span></div><div class="factory-3d-hint">拖拽旋转 · 滚轮缩放 · 点击设备查看详情</div><aside class="factory-3d-info" hidden></aside></div>`;
+  const palette = Object.fromEntries(STATUS_META.map(s => [s.key, parseInt(s.color.slice(1), 16)]));
+  target.innerHTML = `<div class="factory-3d-shell"><div class="factory-view-toolbar"><span>车间数字孪生</span><div class="factory-view-actions"><button class="plant-filter-toggle" type="button">筛选</button><button class="open-machines" type="button">打开设备态势</button><button class="factory-view-toggle" type="button">切换二维</button></div></div><div class="plant-filter-menu" hidden><b>设备状态</b><button type="button" data-status-filter="all">全部</button>${STATUS_META.map(s=>`<button type="button" data-status-filter="${s.key}">${s.label}</button>`).join('')}</div><canvas class="factory-3d-canvas" aria-label="三层车间数字孪生设备图"></canvas><div class="factory-2d-view" hidden></div><div class="factory-3d-floor-labels"></div><div class="factory-3d-legend">${STATUS_META.map(s=>`<span><i class="${s.key}" style="--c:${s.color}"></i>${s.label}</span>`).join('')}</div><div class="factory-3d-hint">拖拽旋转 · 滚轮缩放 · 点击设备查看详情</div><aside class="factory-3d-info" hidden></aside></div>`;
   const shell = target.querySelector('.factory-3d-shell');
   const canvas = target.querySelector('.factory-3d-canvas');
   const twoD = target.querySelector('.factory-2d-view');
@@ -76,7 +113,7 @@ function renderPlant(){
       const active = source.filter(m=>m.status==='normal').length;
       const changing = source.filter(m=>m.status==='change').length;
       const atRisk = source.filter(m=>m.status==='risk').length;
-      return `<section class="factory-2d-floor"><header><div><b>${zone}工段</b><span>${list.length}/${source.length} 台设备 · ${active} 台生产</span></div><small>${changing} 台换型 · ${atRisk} 台风险</small></header><div class="factory-2d-grid">${list.map(machine=>`<button type="button" class="factory-2d-machine ${escapeHtml(machine.status)}" data-machine="${escapeHtml(machine.id)}" title="${escapeHtml(machine.id)} · ${escapeHtml(statusText[machine.status]||'')}"><strong>${escapeHtml(machine.id)}</strong><span>${escapeHtml(statusText[machine.status]||'')}</span></button>`).join('') || '<p class="factory-2d-empty">当前筛选无设备</p>'}</div></section>`;
+      return `<section class="factory-2d-floor"><header><div><b>${zone}工段</b><span>${list.length}/${source.length} 台设备 · ${active} 台生产</span></div><small>${changing} 台换型 · ${atRisk} 台风险</small></header><div class="factory-2d-grid">${list.map(machine=>`<button type="button" class="factory-2d-machine ${escapeHtml(deviceDisplayStatus(machine))}" data-machine="${escapeHtml(machine.id)}" title="${escapeHtml(machine.id)} · ${escapeHtml(statusText[deviceDisplayStatus(machine)]||'')}"><strong>${escapeHtml(machine.id)}</strong><span>${escapeHtml(statusText[deviceDisplayStatus(machine)]||'')}</span></button>`).join('') || '<p class="factory-2d-empty">当前筛选无设备</p>'}</div></section>`;
     }).join('');
     twoD.querySelectorAll('[data-machine]').forEach(button=>button.addEventListener('click',()=>selectMachine(button.dataset.machine)));
   };
@@ -126,7 +163,8 @@ function renderPlant(){
       const rows = Math.ceil(list.length/columns), col=index%columns, row=Math.floor(index/columns);
       const x = (col-(columns-1)/2)*1.75;
       const z = (row-(rows-1)/2)*.72;
-      const material = new THREE.MeshStandardMaterial({color:palette[machine.status],emissive:palette[machine.status],emissiveIntensity:machine.status==='risk'?.95:.42,roughness:.35,metalness:.35});
+      const dstatus = deviceDisplayStatus(machine);
+      const material = new THREE.MeshStandardMaterial({color:palette[dstatus],emissive:palette[dstatus],emissiveIntensity:dstatus==='risk'?.95:.42,roughness:.35,metalness:.35});
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(.75,.42,.52),material);
       mesh.position.set(x,floorYs[zi]+.38,z); mesh.userData={machine}; root.add(mesh); interactive.push(mesh);
       const cap = new THREE.Mesh(new THREE.BoxGeometry(.78,.08,.55),new THREE.MeshStandardMaterial({color:palette[machine.status],emissive:palette[machine.status],emissiveIntensity:.26})); cap.position.set(x,floorYs[zi]+.63,z); root.add(cap); visuals.push({mesh,cap,machine});
@@ -246,10 +284,67 @@ function renderAssistant(){
     <section><h3>当前选中</h3><p><b>${escapeHtml(selected.id)} · ${escapeHtml(selected.zone)}工段</b><br>${selected.status==='risk'?'风险处理优先':selected.status==='change'?'规格切换中':'按计划运行'} · 利用率 ${escapeHtml(selected.capacity)}</p></section>
     <section><h3>约束依据${traces.length?`（${traces.length} 条）`:''}</h3>${chips}${traceList}</section>
     <section><h3>影响评估</h3><p>材料：${escapeHtml(selected.material)}<br>等待队列：${selected.queue} 项 · 下次换型：${escapeHtml(selected.change)}<br>${escapeHtml(riskText)}</p></section>
+    <section><h3>设备操作</h3>${renderDeviceOps()}</section>
     <section><h3>建议动作</h3><ul><li>查看同工段可用设备</li><li>${selected.status==='risk'?'将非紧急订单移至同工段低负荷机台后重新评估':lockedMachines.has(selected.id)?'该安排已锁定，重排时会保留':'锁定当前任务，保持排程稳定'}</li><li>进入插单推演对比交期影响</li></ul></section>${lockedMachines.size?`<section><h3>已锁定安排（${lockedMachines.size} 项）</h3><p>${[...lockedMachines].map(escapeHtml).join('、')}<br>重排时这些设备的当前安排将被保留。</p></section>`:''}`;
   const lockBtn=$('#lockTask');
   if(lockBtn)lockBtn.textContent=lockedMachines.has(selected.id)?`解除锁定 ${selected.id}`:'锁定当前安排';
+  document.querySelectorAll('[data-device-op]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const op = btn.dataset.deviceOp;
+      if(op === 'toggle') applyDeviceOp('toggle');
+      else openDeviceOpForm(op);
+    });
+  });
 }
+// 设备操作区：计划维修 / 紧急停机 / 停用启用（对应赛题进阶任务「设备异常」）
+function renderDeviceOps(){
+  const id = selected ? selected.id : '';
+  const mm = maintenanceOf(id);
+  return `<div class="device-ops">
+      <button type="button" data-device-op="maintenance">计划维修</button>
+      <button type="button" data-device-op="fault">紧急停机</button>
+      <button type="button" data-device-op="toggle">${mm&&mm.type==='disabled'?'启用设备':'停用设备'}</button>
+    </div>
+    <div id="deviceOpForm"></div>
+    ${mm?`<p class="module-note">当前：<b>${escapeHtml(maintenanceLabel(id)||'')}</b>${mm.note?'（'+escapeHtml(mm.note)+'）':''}</p>`:''}`;
+}
+function applyDeviceOp(type){
+  if(!selected) return;
+  const id = selected.id;
+  if(type === 'maintenance'){
+    const start = $('#opStart').value;
+    const hours = Number($('#opHours').value) || 1;
+    if(!start || isNaN(new Date(start).getTime())){ showToast('请填写开始时间'); return; }
+    const end = new Date(new Date(start).getTime() + hours*3600000);
+    setMaintenance(id, 'maintenance', start, toDatetimeLocal(end), '计划维修 '+hours+' 小时');
+    showToast(`已设置 ${id} 计划维修 ${hours} 小时`);
+  }
+  else if(type === 'fault'){
+    const end = $('#opRecover').value;
+    if(!end || isNaN(new Date(end).getTime())){ showToast('请填写预计恢复时间'); return; }
+    setMaintenance(id, 'fault', toDatetimeLocal(new Date()), end, '突发故障停机');
+    showToast(`已设置 ${id} 故障停机，预计恢复 ${end.replace('T',' ')}`);
+  }
+  else if(type === 'toggle'){
+    const mm = maintenanceOf(id);
+    if(mm && mm.type === 'disabled'){ setMaintenance(id, null); showToast(`已启用设备 ${id}`); }
+    else { setMaintenance(id, 'disabled', '', '', '停用'); showToast(`已停用设备 ${id}`); }
+  }
+  renderAssistant(); renderPlant(); renderGantt(); renderRisks(); renderKpi();
+}
+function openDeviceOpForm(type){
+  const form = $('#deviceOpForm');
+  if(!form) return;
+  if(type === 'maintenance'){
+    form.innerHTML = `<div class="device-op-form"><label>开始时间 <input type="datetime-local" id="opStart" value="${toDatetimeLocal(new Date())}"></label><label>时长(小时) <input type="number" id="opHours" min="1" value="4"></label><button type="button" class="primary-button" id="opConfirm">确认维修</button></div>`;
+    $('#opConfirm').addEventListener('click', ()=>applyDeviceOp('maintenance'));
+  }
+  else if(type === 'fault'){
+    form.innerHTML = `<div class="device-op-form"><label>预计恢复时间 <input type="datetime-local" id="opRecover" value="${toDatetimeLocal(new Date(Date.now()+4*3600000))}"></label><button type="button" class="primary-button" id="opConfirm">确认停机</button></div>`;
+    $('#opConfirm').addEventListener('click', ()=>applyDeviceOp('fault'));
+  }
+}
+
 function selectMachine(id){
   const next=machines.find(m=>m.id===id);
   if(!next){showToast(`未找到设备 ${id}`);return;}
@@ -291,11 +386,13 @@ function computeKpi(){
   const congested=machines.filter(m=>m.status==='risk'||parseFloat(m.capacity)>=95).length;
   const riskOrders=risks.filter(r=>r.level==='risk').length;
   const warnOrders=risks.filter(r=>r.level==='change').length;
-  return {onTime,util,congested,riskOrders,warnOrders,
+  const downMachines=machines.filter(m=>maintenanceOf(m.id)).length;
+  return {onTime,util,congested,riskOrders,warnOrders,downMachines,
           orders:totalOrders,badOrders:totalOrders-okOrders,
           activeOrders:activeIds.length,archivedJudged:judged.length};
 }
 function renderKpi(){
+  renderStatusIsland();   // 顶部状态岛与 KPI 同源刷新；必须在 backendKpiLocked 早退之前，否则接上后端后它就不再更新
   if(backendKpiLocked)return;
   const k=computeKpi();
   const set=(sel,text)=>{const el=$(sel);if(el)el.textContent=text;};
@@ -310,6 +407,159 @@ function renderKpi(){
   set('#riskDelta',k.warnOrders?`另有 ${k.warnOrders} 条预警`:'无预警');
   const locked=$('#lockedCount');
   if(locked)locked.textContent=lockedMachines.size+' 项';
+}
+
+/* ============================================================
+   顶部「产线状态岛」
+   ------------------------------------------------------------
+   一排彩色圆圈：一个圈 = 一种设备状态，圈内数字 = 该状态的设备台数，
+   圈外弧长 = 该状态占全厂设备的比例。点圆圈 → 进入「设备态势」并按该状态筛选。
+   数据口径：deviceDisplayStatus()（维护/停机/停用优先于设备自身 status），
+   与三维态势图、设备台账、右侧 AI 面板完全同源，不另算一套。
+   紧急条目也全部取自既有数据源，不编造新数字：
+     · deviceDisplayStatus()==='fault' 的设备（故障停机）
+     · risks 里 level==='risk' 的条目
+     · 订单池里状态含「临期 / 逾期 / 缺料」的订单
+   ============================================================ */
+// 状态岛直接沿用 STATUS_META 的顺序与配色（表格里那 8 种就是图例的 8 项）
+const ISLAND_STATUS = STATUS_META;
+const MACHINE_STATUS_TEXT = Object.fromEntries(STATUS_META.map(s => [s.key, s.short]));
+// 筛选下拉：8 项全都在，且顺序与状态岛、三维图例一致
+const machineStatusOptions = [['all','全部状态']].concat(STATUS_META.map(s => [s.key, s.short]));
+// 状态岛要展示的完整集合 = 登记表 ∪ 当前数据里实际出现的状态。
+// 后端将来换词表（比如冒出 paused）时，多出一项灰底项，而不是被悄悄并进「生产」。
+function islandStatusList(){
+  const seen = new Set(STATUS_META.map(s => s.key));
+  const extra = [];
+  machines.forEach(m => {
+    const k = deviceDisplayStatus(m);
+    if (!seen.has(k)) { seen.add(k); extra.push(statusMetaOf(k)); }
+  });
+  return STATUS_META.concat(extra);
+}
+let machineFilterRequest = null;   // 状态岛点进来的待应用状态筛选，由设备态势页消费后清空
+let islandUrgentKey = null;        // 上一轮紧急条目的指纹，用于「新增紧急信息」的一次性提示
+
+/* ---- 「神虎 GT8 镀锌钢丝绳」断面 ----
+   用户给的品牌参考图：8 个钢股环绕一根绳芯，每股自己又是「1 芯 + 6 丝」的六角束，
+   股与股相切、缝隙里透出蓝色的纤维绳芯。
+   数字全部按真实几何算，不做手绘：wireR 4.2 / 股内环 8.4 → 单股半径 12.6；
+   8 股若要相切，环半径 R = 25.2 / (2·sin22.5°) ≈ 32.9，故取 33。
+   实心点：最小外缘 33+12.6+0.6(描边) ≈ 46 < 50，稳稳落在 viewBox 内。
+   用 SVG 而不是 CSS：一是 56 个圆的六角排布用 CSS 写不出来，
+   二是矢量在任何尺寸下都保持锐利（药丸悬停时断面会从 30px 长到 38px）。 */
+function ropeCrossSectionSVG(){
+  const C = 50;
+  const cw = (x, y, r) => `<circle class="rw-wire" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="${r.toFixed(2)}"/>`;
+  // 一根「股」= 中心 1 丝 + 若干圈六角密排。rings 是各圈半径（单位为丝半径）：
+  // [2] → 1+6=7 丝；[2,4] → 1+6+12=19 丝。单股实半径 = (最外圈系数 + 1) × 丝半径。
+  function strand(cx, cy, wireR, rings){
+    let s = `<g transform="translate(${cx.toFixed(2)} ${cy.toFixed(2)})">` + cw(0, 0, wireR);
+    rings.forEach((k, idx) => {
+      const n = 6 * (idx + 1), rr = k * wireR, off = idx ? 30 / (idx + 1) : 0;
+      for (let i = 0; i < n; i += 1){
+        const b = (i * 360 / n + off) * Math.PI / 180;
+        s += cw(rr * Math.cos(b), rr * Math.sin(b), wireR);
+      }
+    });
+    return s + '</g>';
+  }
+  /* ---- 几何是全算出来的，不是手摆的 ----
+     ① 外层 8 股各 7 丝：丝半径 4.2 → 单股半径 12.6。
+        为什么不用更"像照片"的每股 19 丝：实测把 19 丝股缩到药丸里的 30/38px 时，
+        丝径只剩 1.7px，黑描边糊成一片灰，反而**看不清是钢丝绳**；7 丝在真实尺寸下最立得住。
+     ② 8 股相切：相邻股中心距 = 2·R·sin(180/8) = 2×12.6 → R = 12.6/sin22.5° = 32.9。
+        外缘 = R + 12.6 = 45.5 < 50 ✓（描边 0.6 后仍不越界）
+     ③ 绳芯必须把中间那个洞填掉：股的内缘在 R−12.6 = 20.3 处，
+        所以绳芯顶到 19.1（留 1.2 的窄缝给蓝色）。**这是唯一能让蓝色变成
+        「股缝里的星形」而不是「一个大蓝盘」的办法** —— 第一版就是栽在这里。
+     ④ 蓝色垫底半径取到外缘附近，于是外缘的尖角缝里也会透出一点蓝，
+        和参考图外圈的蓝色小缺角一致。 */
+  const outerWire = 4.2, outerRings = [2];
+  const cluster = outerWire * (outerRings[outerRings.length - 1] + 1);      // 12.6
+  const R = cluster / Math.sin(Math.PI / 8);                               // 32.9
+  const coreWire = (R - cluster - 1.2) / 5;                                // 19 丝绳芯 → 3.82
+  const out = [`<circle class="rw-core" cx="50" cy="50" r="${(R + cluster - 5).toFixed(2)}"/>`];
+  out.push(strand(C, C, coreWire, [2, 4]));                                 // 中心绳芯（比外层股细密）
+  for (let i = 0; i < 8; i += 1){
+    const a = (-90 + i * 45) * Math.PI / 180;
+    out.push(strand(C + R * Math.cos(a), C + R * Math.sin(a), outerWire, outerRings));
+  }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">${out.join('')}</svg>`;
+}
+
+function collectUrgentAlerts(){
+  const out = [];
+  machines.forEach(m => {
+    if(deviceDisplayStatus(m) === 'fault') out.push({ level:'停机', text:`${m.id} ${maintenanceLabel(m.id) || '故障停机'}`, goto:'machines' });
+  });
+  risks.forEach(r => {
+    if(r.level === 'risk') out.push({ level:'风险', text:`${r.title}${r.text ? '：' + r.text : ''}`, goto:'risks' });
+  });
+  orders.slice(1).forEach(row => {
+    const status = String(row[4] || '');
+    if(/临期|逾期|缺料/.test(status)) out.push({ level:status, text:`订单 ${row[0]} ${status}（交期 ${row[3] || '—'}）`, goto:'orders' });
+  });
+  return out;
+}
+function renderStatusIsland(){
+  // 断面是静态矢量，只注入一次（每次重渲染都重写 76 个圆纯属浪费，也会打断悬停动画）
+  const rope = $('#islandRope');
+  if (rope && !rope.childElementCount) rope.innerHTML = ropeCrossSectionSVG();
+  const list = islandStatusList();
+  // 「工段设备态势」的图例也在这里刷新：它和状态岛是同一套状态词表，
+  // 分开维护必然漂移（后端加了 queued，图例却没加，两处对不上）。
+  const legend = $('#statusLegend');
+  if (legend) legend.innerHTML = list.map(s => `<i class="${escapeHtml(s.key)}${s.unknown?' status-unknown':''}"${s.unknown?` style="--c:${s.color}"`:''}></i>${escapeHtml(s.label)}`).join(' ');
+  const dots = $('#islandDots');
+  if(!dots) return;                       // 非指挥总览页 / HTML 未更新时静默跳过
+  const counts = {};
+  list.forEach(s => { counts[s.key] = 0; });
+  // 逐台按 deviceDisplayStatus() 计数，和列表筛选用的是同一个函数，
+  // 因此「岛上数字」与「点进去筛出的行数」天然恒等 —— 这是本模块的硬约束。
+  machines.forEach(m => { const k = deviceDisplayStatus(m); if (k in counts) counts[k] += 1; });
+  const total = machines.length;
+  dots.innerHTML = list.map(s => {
+    const n = counts[s.key];
+    const pct = total ? (n / total * 100) : 0;
+    const label = escapeHtml(s.label);
+    const tip = `${label} ${n} 台 · 占 ${pct.toFixed(1)}%`;
+    return `<button type="button" class="island-dot${n ? '' : ' zero'}${n >= 100 ? ' dense' : ''}${s.unknown ? ' unknown' : ''}" data-island-status="${escapeHtml(s.key)}" style="--c:${s.color};--p:${pct.toFixed(1)}" title="${tip} · 点击跳到设备态势按此状态筛选" aria-label="${tip}，点击查看该类设备"><span class="ring"><b>${n}</b></span><span class="cap">${label}</span></button>`;
+  }).join('');
+  const alerts = collectUrgentAlerts();
+  // 静止态只剩一枚断面，紧急信息没地方写 —— 所以断面右上角点一颗脉冲红点。
+  // 不能因为收起了条带，就把停机/风险/逾期一起藏起来。
+  const islandEl = $('#statusIsland');
+  if (islandEl) islandEl.classList.toggle('has-alert', alerts.length > 0);
+  const alert = $('#islandAlert');
+  if(alert){
+    if(alerts.length){
+      alert.hidden = false;
+      alert.innerHTML = `<i></i>紧急 ${alerts.length} 条`;
+      alert.title = alerts.slice(0, 4).map(a => `${a.level}｜${a.text}`).join('\n');
+    } else {
+      alert.hidden = true;
+      alert.innerHTML = '';
+    }
+  }
+  // 只在「紧急条目发生新增」时提示一次：首帧不弹（避免每次进页面都吵），
+  // 后端 60s 静默重取回来的同样内容也不会重复弹。
+  const key = alerts.map(a => a.level + '|' + a.text).sort().join('||');
+  if(islandUrgentKey !== null && key && key !== islandUrgentKey) showToast(`产线新增紧急信息 ${alerts.length} 条，顶部状态岛已提示`);
+  islandUrgentKey = key;
+}
+// 点状态圈：把状态带到设备态势页，由 machinesPage() 预置下拉并直接筛选列表
+function goMachineStatus(status){
+  if(!ISLAND_STATUS.some(s => s.key === status)) return;
+  machineFilterRequest = status;
+  renderModule('machines');
+  showToast(`已按「${MACHINE_STATUS_TEXT[status]}」筛选设备态势（共 ${machines.filter(m => deviceDisplayStatus(m) === status).length} 台）`);
+}
+// 点紧急提醒：跳到第一条紧急条目所属的页面
+function openUrgentAlert(){
+  const first = collectUrgentAlerts()[0];
+  renderModule(first ? first.goto : 'risks');
+  showToast(first ? `已定位紧急信息：${first.text}` : '当前没有紧急信息');
 }
 // KPI 卡点击：按当前数据定位真正的来源，不再固定跳到 8304 / 8218
 function focusFromKpi(filter){
@@ -374,37 +624,24 @@ async function requestAiAdvice(){
   }
   finally { clearTimeout(timeout); button.disabled=false; button.textContent='AI排产顾问'; }
 }
-function simulateInsert(){
-  // 再次点击 = 撤回推演，恢复原计划（原来只能演示一次，刷新页面才能重来）
-  if(inserted){
-    if(insertSnapshot){
-      const m=machines.find(x=>x.id===insertSnapshot.machineId);
-      if(m){m.capacity=insertSnapshot.capacity;m.queue=insertSnapshot.queue;m.risk=insertSnapshot.risk;}
-      tasks=tasks.slice(0,insertSnapshot.tasksLen);
-      // 按对象引用删除本次插入的风险，而不是假定它一定在第 1 条
-      // （期间可能又插入了别的风险条目，slice 会删错）
-      if(insertSnapshot.riskRef)risks=risks.filter(r=>r!==insertSnapshot.riskRef);
-    }
-    inserted=false;insertSnapshot=null;
-    renderGantt();renderRisks();renderKpi();
-    showToast('已撤回紧急插单推演，恢复当前计划');
-    return;
-  }
-  if(!machines.length){showToast('当前没有设备数据，无法演示插单');return;}
-  // 原来写死 8304/8307：后端数据里若没有这两台就报「缺少 8304」。
-  // 改为优先用经典演示机台，找不到就按状态/同工段从真实数据里挑。
-  const busy=machines.find(m=>m.id==='8304')||machines.find(m=>m.status==='risk')||machines.find(m=>m.zone==='合绳')||machines[0];
-  const peer=machines.find(m=>m.id==='8307')||machines.find(m=>m.zone===busy.zone&&m.id!==busy.id)||busy;
-  insertSnapshot={machineId:busy.id,capacity:busy.capacity,queue:busy.queue,risk:busy.risk,tasksLen:tasks.length,riskRef:null};
-  inserted=true;
-  const oldCapacity=busy.capacity, oldQueue=busy.queue;
-  busy.capacity='100%';busy.queue=(Number(busy.queue)||0)+1;busy.risk='急单插入后，原有订单预计顺延 2.5 小时';
-  tasks.push({machine:`${peer.id} ${peer.zone}`,label:'急单 JW-999',left:11,width:28,status:'risk'});
-  const newRisk={level:'risk',title:'紧急插单 JW-999 已加入推演',text:`${peer.id} 接单可守住急单交期；${busy.id} 原有订单将顺延 2.5 小时`,time:'现在',machine:peer.id};
-  risks=[newRisk,...risks];
-  insertSnapshot.riskRef=newRisk;
-  renderGantt();renderRisks();renderKpi();selectMachine(peer.id);
-  showToast(`已生成插单影响方案（${busy.id} 负载 ${oldCapacity}→100%，队列 ${oldQueue}→${busy.queue}）；再次点击可撤回`);
+/* 顶栏「紧急插单」入口。
+   旧 simulateInsert 会在前端硬编码 JW-999、写死“顺延 2.5 小时”并直接改内存里的设备负载，
+   看起来像排产、实际不经过任何一条 R1–R10 约束，点击刷新即消失。已整段移除。
+   现在这个按钮只做一件事：把用户送到重排推演页的插单模板，真正的重排由算法引擎产出。 */
+function openRushInsertForm(){
+  renderModule('reschedule');
+  setScenario('insert',true);
+  const card=document.querySelector('.manual-insert-card');
+  if(!card){showToast('插单模板未就绪，请打开重排推演页');return;}
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+  // 高亮一下落点，避免用户以为按钮没反应
+  card.classList.add('flash-target');
+  setTimeout(()=>card.classList.remove('flash-target'),1800);
+  const pri=card.querySelector('select[name="priority"]');
+  if(pri)pri.value='紧急';
+  const first=card.querySelector('input[name="orderId"]');
+  if(first)setTimeout(()=>first.focus({preventScroll:true}),450);
+  showToast('请填写插单明细；提交后由算法引擎重排受影响的设备队列');
 }
 // 测量顶栏高度，供 KPI 行 sticky 的 top 偏移使用（响应式下顶栏高度会变）
 function syncTopbarHeight(){
@@ -425,19 +662,165 @@ function schedulePreviewMarkup(){
 function schedulePage(){return pageFrame('schedule',`<div class="module-grid"><section class="panel module-card"><div class="panel-heading"><div><p class="eyebrow">优化偏好</p><h2>排产参数</h2></div></div><div class="form-list"><label>优化目标 <select id="optGoal"><option>准时交付优先</option><option>平衡交付与换型</option><option>设备利用率优先</option></select></label><label>排产窗口 <select id="optWindow"><option>未来 7 天</option><option>未来 14 天</option></select></label><label>已锁定任务 <b id="lockedCount">0 项</b></label><button class="primary-button" id="runTrial">生成试排方案</button></div></section><section class="panel module-card span-2"><div class="panel-heading"><div><p class="eyebrow">当前计划 · 设备视角</p><h2>设备排程预览</h2></div><span class="good" id="previewState">已加载</span></div><div id="schedulePreview">${schedulePreviewMarkup()}</div><p class="module-note" id="schedulePreviewNote">前端预演：按当前已加载计划绘制前 ${Math.min(6,tasks.length)} 行（共 ${tasks.length} 个设备行）。正式试排须由确定性算法引擎生成并做约束校验，前端不产出最终排程。</p></section></div>`)}
 // 优先级由订单状态推导，不再固定写「第一条=紧急」；工艺匹配统一标「待引擎校验」——
 // 导入或演示数据都未经确定性算法校验，不能显示成「已匹配」（项目口径：不伪装成已排程）。
-const orderRows = (items=orders.slice(1)) => items.map(r=>{const st=String(r[4]||'');const hot=/临期|缺料|逾期/.test(st);const mid=/换型/.test(st);const pri=hot?'紧急':mid?'高':'常规';return `<div class="order-data" data-order="${escapeHtml(r[0])}"><span>${escapeHtml(r[0])}</span><span>${escapeHtml(r[1])}</span><span>${escapeHtml(r[2])}</span><span>${escapeHtml(r[3])}</span><span class="${hot?'danger':''}">${pri}</span><span>待引擎校验</span></div>`;}).join('') || '<p class="empty-state">没有找到匹配订单</p>';
-function ordersPage(){return pageFrame('orders',`<section class="panel module-card"><div class="filter-row"><input id="orderSearch" aria-label="搜索订单：订单号、规格或客户" placeholder="搜索订单号、规格或客户" /><button id="orderRiskFilter">仅看风险</button><button id="orderSort">交期升序 ▾</button><button id="newOrder" class="primary-button">新增订单</button></div><div class="data-table"><div class="data-head"><span>订单号</span><span>规格</span><span>数量</span><span>预发货日</span><span>优先级</span><span>工艺匹配</span></div><div id="orderTableBody">${orderRows()}</div></div></section>`)}
+// ============ 订单优先级与延期容忍度（R8/R9 人工标注） ============
+// 优先级：0=常规(最低) 1=临期(中等) 2=紧急(最高，紧急插单)
+// 延期容忍：true=可延期3天(可容忍客户，软约束) false=不可延期(罚款客户，硬约束)
+// 因订单表无客户字段，R8 罚款/容忍、R9 优先级需由企业人工导入标注。
+let orderPriority = {};    // {订单号: 0|1|2}
+let orderTolerant = {};    // {订单号: true|false}
+let selectedOrder = null;  // 当前在助手面板选中的订单
+
+function priorityLevel(orderId){
+  if(orderId in orderPriority) return orderPriority[orderId];
+  const row = orders.find((r,i)=>i>0 && String(r[0])===orderId);
+  const st = row ? String(row[4]||'') : '';
+  return /临期|缺料|逾期/.test(st) ? 1 : 0;   // 默认：临期→中等，其余→最低
+}
+function priorityLabel(level){ return ['常规','临期','紧急'][level] ?? '常规'; }
+function setPriority(orderId, level){ orderPriority[orderId] = Math.max(0, Math.min(2, Number(level)||0)); }
+function isTolerant(orderId){ return orderTolerant[orderId] === true; }
+function setTolerant(orderId, val){ orderTolerant[orderId] = !!val; }
+// 预留接口：把人工标注的优先级 + 延期容忍度导出为结构化数据，
+// 供后端排产接口（如 POST /api/replan）读取 —— R8 延期容忍、R9 优先级是排产的输入约束。
+// 后端据此在「无法保证全部准时」时优先保障「不可延期」订单，把违约罚款降到最低。
+// 解析延期容忍清单：CSV 两列「订单号, 是否可延期3天」，批量标记 orderTolerant。
+// 标记词：是/可延期/true/1/y/yes → 可延期；否则 → 不可延期。
+function parseTolerantImport(text){
+  const lines = String(text||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  let count = 0;
+  lines.forEach((line, idx)=>{
+    if(idx === 0 && /订单|延期|容忍|客户/.test(line)) return;
+    const cols = line.split(/[,，\t]/).map(c=>c.trim());
+    const orderId = cols[0];
+    if(!orderId) return;
+    const flag = (cols[1]||'').toLowerCase();
+    setTolerant(orderId, /是|可延期|true|1|y|yes/.test(flag));
+    count++;
+  });
+  return count;
+}
+
+// ============ 设备台账增减（主数据管理） ============
+// 新增设备：编号需 4 位数字且唯一；工段决定工序归属。新设备默认「待排」。
+function addDevice(code, zone){
+  code = String(code||'').trim();
+  if(!code) return '请输入设备编号';
+  if(!/^\d{4}$/.test(code)) return '设备编号应为 4 位数字（如 8304）';
+  if(machines.some(m=>m.id===code)) return '设备编号已存在';
+  machines.push({ id:code, zone, status:'idle', order:'待排', product:'—', material:'待模型接入', capacity:'0%', queue:0, change:'无', risk:'无' });
+  return null;
+}
+// 删除设备：从台账移除，并清理其甘特任务与锁定状态
+function removeDevice(code){
+  const i = machines.findIndex(m=>m.id===code);
+  if(i < 0) return false;
+  machines.splice(i, 1);
+  tasks = tasks.filter(t=>{ const c = barCode(t, null); return c !== code; });
+  lockedMachines.delete(code);
+  return true;
+}
+
+// ============ 设备维护/停机/停用（对应赛题进阶任务「设备异常」） ============
+// type: 'maintenance'(维护中/计划维修，灰) | 'fault'(故障停机，深红) | 'disabled'(停用，深灰)
+// start/end: 时间戳字符串（维护/停机的开始与预计结束）；note: 原因/说明
+let machineMaintenance = {};
+
+function maintenanceOf(code){ return machineMaintenance[code] || null; }
+function setMaintenance(code, type, start, end, note){
+  if(type == null){ delete machineMaintenance[code]; }
+  else { machineMaintenance[code] = { type, start, end, note: note||'' }; }
+}
+// 设备显示状态：优先维护/停机/停用，否则用自身 status
+function deviceDisplayStatus(m){
+  const mm = maintenanceOf(m.id);
+  if(mm) return mm.type;
+  return m.status;
+}
+// 维护/停机状态的中文与说明（含停产时间）
+function maintenanceLabel(code){
+  const mm = maintenanceOf(code);
+  if(!mm) return null;
+  const names = { maintenance:'维护中', fault:'故障停机', disabled:'停用' };
+  const label = names[mm.type] || mm.type;
+  let dur = '';
+  if(mm.type !== 'disabled' && mm.end){
+    const end = new Date(mm.end), now = new Date();
+    if(!isNaN(end.getTime())) dur = '（预计恢复 ' + (mm.type==='fault'?'':'至 ') + mm.end.replace('T',' ').slice(0,16) + '）';
+  }
+  return label + dur;
+}
+
+function getOrderAnnotations(){
+  const out = {};
+  orders.slice(1).forEach(r=>{
+    const id = String(r[0]);
+    out[id] = { priority: priorityLevel(id), tolerant: isTolerant(id), due: r[3] };
+  });
+  return out;
+}
+
+// 点击订单：助手面板切换为该订单的优先级/延期容忍设置
+function selectOrder(orderId){
+  selectedOrder = orderId;
+  renderOrderAssistant(orderId);
+}
+function renderOrderAssistant(orderId){
+  const lv = priorityLevel(orderId);
+  const tol = isTolerant(orderId);
+  const row = orders.find((r,i)=>i>0 && String(r[0])===orderId);
+  $('#assistantContent').innerHTML = `
+    <section><h3>订单详情</h3><p><b>${escapeHtml(orderId)}</b><br>${escapeHtml(row?row[1]:'')} · ${escapeHtml(row?row[2]:'')} · 交期 ${escapeHtml(row?row[3]:'')}</p></section>
+    <section><h3>优先级（R9）</h3>
+      <div class="pri-row"><input type="range" id="priRange" min="0" max="2" step="1" value="${lv}"><b id="priLabel">${priorityLabel(lv)}</b></div>
+      <div class="pri-scale"><span>常规</span><span>临期</span><span>紧急</span></div>
+      <p class="module-note">紧急插单＝最高，临期＝中等，常规＝最低。拖动进度条调整优先级。</p>
+    </section>
+    <section><h3>延期容忍度（R8）</h3>
+      <label class="tol-switch"><input type="checkbox" id="tolCheck" ${tol?'checked':''}> 客户可延期3天</label>
+      <p class="module-note">解释：勾选＝该客户有 3 天延期容忍度，延期 ≤3 天不罚款（软约束）；不勾选＝延期即罚款（硬约束）。此标记由企业人工导入。</p>
+    </section>
+    <section><h3>排产策略</h3><p class="module-note">当无法保证全部准时交付时，排产优先保障「不可延期」订单，把违约罚款降到最低。</p></section>
+  `;
+  $('#priRange').addEventListener('input', () => {
+    const v = Number($('#priRange').value);
+    setPriority(orderId, v);
+    const label = $('#priLabel');
+    if(label) label.textContent = priorityLabel(v);
+    // 订单中心表格同步刷新优先级列
+    const body = $('#orderTableBody');
+    if(body) body.innerHTML = orderRows(orders.slice(1));
+  });
+  $('#tolCheck').addEventListener('change', e => {
+    setTolerant(orderId, e.target.checked);
+    const body = $('#orderTableBody');
+    if(body) body.innerHTML = orderRows(orders.slice(1));
+    showToast(e.target.checked ? `已标记 ${orderId} 可延期3天` : `已标记 ${orderId} 不可延期（罚款客户）`);
+  });
+}
+
+const orderRows = (items=orders.slice(1)) => items.map(r=>{const id=String(r[0]);const lv=priorityLevel(id);const tol=isTolerant(id);return `<div class="order-data" data-order="${escapeHtml(id)}"><span>${escapeHtml(id)}</span><span>${escapeHtml(r[1])}</span><span>${escapeHtml(r[2])}</span><span>${escapeHtml(r[3])}</span><span class="pri-lv pri-${lv}">${priorityLabel(lv)}</span>${tol?'<span class="tol-tag" title="客户有3天延期容忍度：延期≤3天不罚款（软约束），由企业人工导入">可延期3天</span>':'<span class="tol-none">不可延期</span>'}<span>待引擎校验</span></div>`;}).join('') || '<p class="empty-state">没有找到匹配订单</p>';
+function ordersPage(){return pageFrame('orders',`<section class="panel module-card"><div class="filter-row"><input id="orderSearch" aria-label="搜索订单：订单号、规格或客户" placeholder="搜索订单号、规格或客户" /><button id="orderRiskFilter">仅看风险</button><button id="orderSort">交期升序 ▾</button><button id="newOrder" class="primary-button">新增订单</button></div><div class="data-table order-table"><div class="data-head"><span>订单号</span><span>规格</span><span>数量</span><span>预发货日</span><span>优先级</span><span>延期容忍</span><span>工艺匹配</span></div><div id="orderTableBody">${orderRows()}</div></div></section>`)}
 function riskSummaryMarkup(){
   const hard=risks.filter(r=>r.level==='risk').length;
   const warn=risks.filter(r=>r.level==='change').length;
   const devs=new Set(risks.map(r=>r.machine).filter(Boolean)).size;
-  return `<div class="risk-summary"><div><b>${hard}</b><span>硬风险</span></div><div><b>${warn}</b><span>预警</span></div><div><b>${devs}</b><span>关联设备</span></div><div><b>${risks.length}</b><span>风险条目</span></div></div>`;
+  // 罚款风险订单：不可延期（R8 硬约束）且临期/紧急 —— 排产须优先保障
+  const penaltyRisk = orders.slice(1).filter(r=>!isTolerant(String(r[0])) && priorityLevel(String(r[0]))>=1).length;
+  const down = machines.filter(m=>maintenanceOf(m.id)).length;
+  return `<div class="risk-summary"><div><b>${hard}</b><span>硬风险</span></div><div><b>${warn}</b><span>预警</span></div><div><b>${penaltyRisk}</b><span>罚款风险订单</span></div><div><b>${down}</b><span>停机设备</span></div></div>`;
 }
 function risksPage(){return pageFrame('risks',`${riskSummaryMarkup()}<section class="panel module-card"><div class="panel-heading"><div><p class="eyebrow">按影响程度排序</p><h2>待处置风险</h2></div></div><div class="risk-action-list">${risks.map((r,i)=>`<button ${r.machine?`data-risk-machine="${escapeHtml(r.machine)}"`:''} class="risk-action"><i class="${escapeHtml(r.level||'')}"></i><div><b>${escapeHtml(r.title)}</b><p>${escapeHtml(r.text)}</p></div><span>${i===0?'立即处理':'查看方案'} →</span></button>`).join('')||'<p class="empty-state">当前没有待处置风险</p>'}</div></section>`)}
 function reschedulePage(){return pageFrame('reschedule',`<div class="scenario-grid"><section class="panel module-card scenario selected" data-scenario="insert"><p class="eyebrow">场景 01</p><h2>紧急插单</h2><p>新订单要求在 24 小时内交付。</p><b class="danger" data-scenario-note="insert">影响 2 张订单</b><button class="primary-button" data-scenario-action="insert">运行推演</button></section><section class="panel module-card scenario" data-scenario="shutdown"><p class="eyebrow">场景 02</p><h2>设备停机</h2><p>选择设备和预计停机时段，计算替代机台。</p><b class="warning" data-scenario-note="shutdown">待选择设备</b><button data-scenario-action="shutdown">配置场景</button></section><section class="panel module-card scenario" data-scenario="material"><p class="eyebrow">场景 03</p><h2>物料延迟</h2><p>评估原材料未到货对下游工序的传播。</p><b class="info" data-scenario-note="material">待录入物料</b><button data-scenario-action="material">配置场景</button></section></div><div id="scenarioConfig" class="scenario-config"></div><section class="panel module-card manual-insert-card"><div class="panel-heading"><div><p class="eyebrow">人工输入 · 模拟预览</p><h2>自定义插单模板</h2></div><span class="module-note">填写后先生成影响预览，不直接改正式排程</span></div><div class="manual-insert-grid"><form id="manualInsertForm" class="manual-insert-form"><label>订单号<input name="orderId" required placeholder="例如 JW-260918-999"></label><label>产品规格<input name="spec" required placeholder="例如 30mm GT34Z"></label><label>数量<input name="quantity" type="number" min="1" required placeholder="米 / 吨"></label><label>要求交期<input name="due" type="datetime-local" required></label><label>物料<input name="material" required placeholder="例如 WSC 绳芯"></label><label>优先级<select name="priority"><option>紧急</option><option>高</option><option>常规</option></select></label><label>首选工段<select name="zone"><option>拉丝</option><option>捻股</option><option>合绳</option><option>不限</option></select></label><label>备注<textarea name="note" rows="2" placeholder="可填写客户、特殊工艺或不可切换设备"></textarea></label><button class="primary-button" type="submit">生成插单预览</button></form><aside class="manual-insert-guide"><h3>填写指导</h3><ol><li>订单号保持唯一，方便后续追踪。</li><li>数量和交期用于判断是否会挤压现有订单。</li><li>物料、首选工段会参与设备适配和换型评估。</li><li>不确定的字段可先填“待确认”，再让计划员补齐。</li></ol><div class="manual-template-example"><b>示例</b><code>JW-260918-999｜30mm GT34Z｜1600m｜09/19 08:00｜WSC 绳芯｜紧急</code></div></aside></div><div id="manualInsertResult" class="manual-insert-result" hidden></div></section><section class="panel module-card compare" id="scenarioCompare"></section>`)}
-const machineRows = (items=machines) => items.map(m=>`<button class="machine-record" data-machine="${escapeHtml(m.id)}"><i class="${escapeHtml(m.status||'')}"></i><b>${escapeHtml(m.id)}</b><span>${escapeHtml(m.zone)}</span><span>${escapeHtml(m.order)}</span><span>利用率 ${escapeHtml(m.capacity)}</span><em>${m.status==='normal'?'生产中':m.status==='idle'?'待排':m.status==='change'?'换型中':'风险'}</em></button>`).join('') || '<p class="empty-state">没有符合条件的设备</p>';
-function machinesPage(){return pageFrame('machines',`<section class="panel module-card"><div class="filter-row"><input id="machineSearch" aria-label="按设备编号搜索" placeholder="输入设备编号，例如 8304" /><select id="zoneFilter" aria-label="按工段筛选"><option value="all">全部工段</option><option>拉丝</option><option>捻股</option><option>合绳</option></select><select id="statusFilter" aria-label="按设备状态筛选"><option value="all">全部状态</option><option value="normal">生产中</option><option value="idle">待排</option><option value="change">换型中</option><option value="risk">风险</option></select></div><div id="machineTable" class="machine-list">${machineRows()}</div></section>`)}
-function dataPage(){return pageFrame('data',`<div class="module-grid"><section class="panel module-card upload-card"><p class="eyebrow">导入数据</p><h2>订单与工艺文件</h2><div class="drop-zone" id="dropZone">⇅<b>拖入 Excel 文件</b><span id="fileHint">支持订单、设备、工艺、物料数据</span><input id="dataInput" type="file" accept=".xlsx,.xls,.csv" aria-label="选择要导入的数据文件" hidden><button id="chooseFile" type="button">选择文件</button></div><div id="importResult" class="import-result" hidden></div></section><section class="panel module-card"><p class="eyebrow">当前数据源</p><h2>数据状态</h2><div id="sourceList" class="source-list">${sourceListMarkup()}</div></section><section class="panel module-card"><p class="eyebrow">导出成果</p><h2>计划包</h2><div class="source-list"><p><b>排产计划表</b><button data-export="CSV">导出 CSV</button></p><p><b>设备甘特图</b><button data-export="PNG">导出 PNG</button></p><p><b>风险处置清单</b><button data-export="XLSX">导出 XLSX</button></p></div></section><section class="panel module-card import-preview-card" id="importPreviewCard" hidden><div class="panel-heading"><div><p class="eyebrow">标准化数据预览</p><h2>导入校验结果</h2></div><span id="importVersion" class="module-note"></span></div><div id="importSummary" class="import-summary"></div><div id="importIssues" class="import-issues"></div><div id="importRows" class="import-rows"></div></section></div>`)}
+// 状态文字与状态点颜色全部取自 STATUS_META：状态岛、下拉、列表三处不可能再对不上。
+// 未登记状态走 status-unknown + 内联 --c，不会因为「没写 CSS 类」而丢色。
+const machineRows = (items=machines) => items.map(m=>{const st=deviceDisplayStatus(m);const meta=statusMetaOf(st);return `<button class="machine-record" data-machine="${escapeHtml(m.id)}"><i class="${escapeHtml(st)}${meta.unknown?' status-unknown':''}"${meta.unknown?` style="--c:${meta.color}"`:''}></i><b>${escapeHtml(m.id)}</b><span>${escapeHtml(m.zone)}</span><span>${escapeHtml(m.order)}</span><span>利用率 ${escapeHtml(m.capacity)}</span><em>${escapeHtml(meta.short)}</em></button>`;}).join('') || '<p class="empty-state">没有符合条件的设备</p>';
+function machinesPage(){
+  // 从顶部状态岛点进来时会带一个待应用状态：预置下拉 + 直接把列表筛好。
+  // 否则用户点了圆圈还得在下拉里再选一次，等于没省事。
+  const requested = ISLAND_STATUS.some(s => s.key === machineFilterRequest) ? machineFilterRequest : 'all';
+  const list = requested === 'all' ? machines : machines.filter(m => deviceDisplayStatus(m) === requested);
+  return pageFrame('machines',`<section class="panel module-card"><div class="filter-row"><input id="machineSearch" aria-label="按设备编号搜索" placeholder="输入设备编号，例如 8304" /><select id="zoneFilter" aria-label="按工段筛选"><option value="all">全部工段</option><option>拉丝</option><option>捻股</option><option>合绳</option></select><select id="statusFilter" aria-label="按设备状态筛选">${machineStatusOptions.map(([v,t])=>`<option value="${v}"${v===requested?' selected':''}>${t}</option>`).join('')}</select></div><div id="machineTable" class="machine-list">${machineRows(list)}</div></section>`)}
+function dataPage(){return pageFrame('data',`<div class="module-grid"><section class="panel module-card upload-card"><p class="eyebrow">导入数据</p><h2>订单与工艺文件</h2><div class="drop-zone" id="dropZone">⇅<b>拖入 Excel 文件</b><span id="fileHint">支持订单、设备、工艺、物料数据</span><input id="dataInput" type="file" accept=".xlsx,.xls,.csv" aria-label="选择要导入的数据文件" hidden><button id="chooseFile" type="button">选择文件</button></div><div id="importResult" class="import-result" hidden></div></section><section class="panel module-card"><p class="eyebrow">设备台账管理</p><h2>设备增减</h2><div class="device-mgr-form"><label>设备编号 <input id="newDeviceCode" placeholder="例如 8304" /></label><label>工段 <select id="newDeviceZone"><option>拉丝</option><option>捻股</option><option>合绳</option></select></label><button id="addDeviceBtn" class="primary-button" type="button">新增设备</button></div><div class="device-mgr-form"><label>删除设备 <select id="delDeviceSelect"></select></label><button id="delDeviceBtn" type="button">删除</button></div><p class="module-note" id="deviceMgrNote">当前台账 <b>${machines.length}</b> 台设备。</p></section><section class="panel module-card"><p class="eyebrow">当前数据源</p><h2>数据状态</h2><div id="sourceList" class="source-list">${sourceListMarkup()}</div></section><section class="panel module-card"><p class="eyebrow">导出成果</p><h2>计划包</h2><div class="source-list"><p><b>排产计划表</b><button data-export="CSV">导出 CSV</button></p><p><b>设备甘特图</b><button data-export="PNG">导出 PNG</button></p><p><b>风险处置清单</b><button data-export="XLSX">导出 XLSX</button></p></div></section><section class="panel module-card"><p class="eyebrow">人工标注 · R8 延期容忍</p><h2>客户延期容忍度导入</h2><p class="module-note">导入 CSV（两列：订单号, 是否可延期3天），批量标记客户延期容忍度。示例行：JW-260918-106,是</p><div class="source-list"><p><b>延期容忍清单</b><button data-import-tolerant="1" type="button">选择 CSV 文件</button></p></div><input id="tolerantInput" type="file" accept=".csv" hidden><div id="tolerantResult" class="module-note"></div></section><section class="panel module-card import-preview-card" id="importPreviewCard" hidden><div class="panel-heading"><div><p class="eyebrow">标准化数据预览</p><h2>导入校验结果</h2></div><span id="importVersion" class="module-note"></span></div><div id="importSummary" class="import-summary"></div><div id="importIssues" class="import-issues"></div><div id="importRows" class="import-rows"></div></section></div>`)}
 // 数据状态卡片：原来写死「内置演示订单 4 条 / 内置设备台账 109 台」，
 // 导入数据或接入后端后与实际不符。改为按真实数据渲染。
 function sourceListMarkup(){
@@ -477,7 +860,7 @@ function applyOrderFilter(){
   const body=$('#orderTableBody');
   if(body)body.innerHTML=orderRows(visible);
 }
-function applyMachineFilter(){const query=$('#machineSearch').value.trim();const zone=$('#zoneFilter').value;const status=$('#statusFilter').value;const visible=machines.filter(m=>(!query||m.id.includes(query))&&(zone==='all'||m.zone===zone)&&(status==='all'||m.status===status));$('#machineTable').innerHTML=machineRows(visible);$('#machineTable').querySelectorAll('[data-machine]').forEach(btn=>btn.addEventListener('click',()=>selectMachine(btn.dataset.machine)));}
+function applyMachineFilter(){const query=$('#machineSearch').value.trim();const zone=$('#zoneFilter').value;const status=$('#statusFilter').value;const visible=machines.filter(m=>(!query||m.id.includes(query))&&(zone==='all'||m.zone===zone)&&(status==='all'||deviceDisplayStatus(m)===status));$('#machineTable').innerHTML=machineRows(visible);$('#machineTable').querySelectorAll('[data-machine]').forEach(btn=>btn.addEventListener('click',()=>selectMachine(btn.dataset.machine)));}
 function setScenario(kind,silent){
   const meta={insert:['紧急插单','急单插入后需重算受影响设备队列与交期，候选设备见下方模板。'],shutdown:['设备停机','建议将停机设备的后续队列分流至同工段空闲机台，并锁定已开工任务。'],material:['物料延迟','建议提前分配现有库存至临近交期订单，并评估下游工序顺延。']}[kind];
   document.querySelectorAll('.scenario').forEach(card=>card.classList.toggle('selected',card.dataset.scenario===kind));
@@ -873,14 +1256,17 @@ function analysisPage(){
   `);
 }
 
-function setupModule(page){const view=$('#moduleView');view.querySelectorAll('[data-machine]').forEach(btn=>btn.addEventListener('click',()=>{selectMachine(btn.dataset.machine);showToast(`已选中设备 ${btn.dataset.machine}`)}));view.querySelectorAll('[data-risk-machine]').forEach(btn=>btn.addEventListener('click',()=>{selectMachine(btn.dataset.riskMachine);renderModule('dashboard')}));if(page==='orders'){const search=$('#orderSearch');search.addEventListener('input',applyOrderFilter);$('#orderRiskFilter').addEventListener('click',event=>{event.currentTarget.classList.toggle('selected');applyOrderFilter()});$('#orderSort').addEventListener('click',()=>{orderSortAsc=!orderSortAsc;const el=$('#orderSort');if(el)el.textContent=`交期${orderSortAsc?'升序':'降序'} ▾`;sortOrdersByDue();});$('#newOrder').addEventListener('click',()=>{renderModule('reschedule');setScenario('insert',true);document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});showToast('新增订单请使用人工调序插单模板');});}if(page==='machines'){['machineSearch','zoneFilter','statusFilter'].forEach(id=>$('#'+id).addEventListener(id==='machineSearch'?'input':'change',applyMachineFilter));}if(page==='reschedule'){view.querySelectorAll('.scenario').forEach(card=>card.addEventListener('click',()=>setScenario(card.dataset.scenario)));view.querySelectorAll('[data-scenario-action]').forEach(btn=>btn.addEventListener('click',event=>{event.stopPropagation();setScenario(btn.dataset.scenarioAction);}));setScenario('insert',true);}if(page==='archive'){
+function setupModule(page){const view=$('#moduleView');view.querySelectorAll('[data-machine]').forEach(btn=>btn.addEventListener('click',()=>{selectMachine(btn.dataset.machine);showToast(`已选中设备 ${btn.dataset.machine}`)}));view.querySelectorAll('[data-risk-machine]').forEach(btn=>btn.addEventListener('click',()=>{selectMachine(btn.dataset.riskMachine);renderModule('dashboard')}));if(page==='orders'){const search=$('#orderSearch');search.addEventListener('input',applyOrderFilter);$('#orderRiskFilter').addEventListener('click',event=>{event.currentTarget.classList.toggle('selected');applyOrderFilter()});$('#orderSort').addEventListener('click',()=>{orderSortAsc=!orderSortAsc;const el=$('#orderSort');if(el)el.textContent=`交期${orderSortAsc?'升序':'降序'} ▾`;sortOrdersByDue();});$('#newOrder').addEventListener('click',()=>{renderModule('reschedule');setScenario('insert',true);document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});showToast('新增订单请使用人工调序插单模板');});}if(page==='machines'){['machineSearch','zoneFilter','statusFilter'].forEach(id=>$('#'+id).addEventListener(id==='machineSearch'?'input':'change',applyMachineFilter));machineFilterRequest=null;}if(page==='reschedule'){view.querySelectorAll('.scenario').forEach(card=>card.addEventListener('click',()=>setScenario(card.dataset.scenario)));view.querySelectorAll('[data-scenario-action]').forEach(btn=>btn.addEventListener('click',event=>{event.stopPropagation();setScenario(btn.dataset.scenarioAction);}));setScenario('insert',true);}if(page==='archive'){
     view.querySelectorAll('[data-complete]').forEach(btn=>btn.addEventListener('click',()=>openArchiveForm(btn.dataset.complete)));
     view.querySelectorAll('[data-unarchive]').forEach(btn=>btn.addEventListener('click',()=>{
       const id=btn.dataset.unarchive;
       if(unarchiveOrder(id)){renderModule('archive');renderGantt();renderRisks();renderOrders();renderKpi();showToast(`已撤回 ${id}，订单回到在排池，任务与风险已恢复`);}
     }));
   }
-  if(page==='schedule'){$('#runTrial')?.addEventListener('click',updateSchedulePreview);}if(page==='data'){const input=$('#dataInput');$('#chooseFile').addEventListener('click',()=>input.click());input.addEventListener('change',()=>{const file=input.files[0];if(file){$('#fileHint').textContent=`已选择：${file.name}（${Math.ceil(file.size/1024)} KB），等待解析`;}});view.querySelectorAll('[data-export]').forEach(button=>button.addEventListener('click',()=>{const kind=button.dataset.export;if(kind==='CSV')exportScheduleCSV();else if(kind==='PNG')exportGanttPNG();else if(kind==='XLSX')exportRisksXLSX();}));}const action=view.querySelector('[data-page-action]');if(action)action.addEventListener('click',()=>{const p=action.dataset.pageAction;if(p==='data')$('#dataInput')?.click();else if(p==='reschedule'){setScenario('insert');document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});}else exportCurrentView(p);});}
+  if(page==='schedule'){$('#runTrial')?.addEventListener('click',updateSchedulePreview);}if(page==='data'){const input=$('#dataInput');$('#chooseFile').addEventListener('click',()=>input.click());const addBtn=view.querySelector('#addDeviceBtn');const delBtn=view.querySelector('#delDeviceBtn');const delSel=view.querySelector('#delDeviceSelect');
+    if(addBtn){addBtn.addEventListener('click',()=>{const code=$('#newDeviceCode').value;const zone=$('#newDeviceZone').value;const err=addDevice(code,zone);if(err){showToast(err);return;}renderModule('data');renderKpi();showToast('已新增设备 '+code+'（'+zone+'工段）');});}
+    if(delBtn&&delSel){const refreshDel=()=>{delSel.innerHTML=machines.map(m=>`<option value="${escapeHtml(m.id)}">${escapeHtml(m.id)} · ${escapeHtml(m.zone)}</option>`).join('');};refreshDel();delBtn.addEventListener('click',()=>{const code=delSel.value;if(!code){showToast('请选择要删除的设备');return;}if(!removeDevice(code)){showToast('删除失败');return;}renderModule('data');renderKpi();showToast('已删除设备 '+code);});}
+    const tolBtn=view.querySelector('[data-import-tolerant]');const tolInput=$('#tolerantInput');if(tolBtn&&tolInput){tolBtn.addEventListener('click',()=>tolInput.click());tolInput.addEventListener('change',()=>{const f=tolInput.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const n=parseTolerantImport(rd.result);const r=$('#tolerantResult');if(r)r.textContent='已导入 '+n+' 条延期容忍标注（可在订单中心查看）';showToast('已导入 '+n+' 条延期容忍标注');};rd.readAsText(f,'utf-8');});}input.addEventListener('change',()=>{const file=input.files[0];if(file){$('#fileHint').textContent=`已选择：${file.name}（${Math.ceil(file.size/1024)} KB），等待解析`;}});view.querySelectorAll('[data-export]').forEach(button=>button.addEventListener('click',()=>{const kind=button.dataset.export;if(kind==='CSV')exportScheduleCSV();else if(kind==='PNG')exportGanttPNG();else if(kind==='XLSX')exportRisksXLSX();}));}const action=view.querySelector('[data-page-action]');if(action)action.addEventListener('click',()=>{const p=action.dataset.pageAction;if(p==='data')$('#dataInput')?.click();else if(p==='reschedule'){setScenario('insert');document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});}else exportCurrentView(p);});}
 function renderModule(page){const view=$('#moduleView'), dashboard=$('#dashboardContent');
   // 顶栏悬浮（sticky）只在指挥总览页生效，其他页面顶栏随内容滚动
   document.body.classList.toggle('is-dashboard', page==='dashboard');
@@ -892,8 +1278,15 @@ function renderModule(page){const view=$('#moduleView'), dashboard=$('#dashboard
     // 注意不调用 renderPlant：重建三维场景会重置用户已经拖好的视角，代价也高。
     renderGantt();renderRisks();renderOrders();renderAssistant();renderKpi();
     return;
-  }dashboard.hidden=true;view.hidden=false;$('#assistantPanel').hidden=page==='data';$('.topbar h1').textContent=pageMeta[page][0];view.innerHTML=({schedule:schedulePage,orders:ordersPage,risks:risksPage,reschedule:reschedulePage,archive:archivePage,analysis:analysisPage,machines:machinesPage,data:dataPage}[page])();setupModule(page);}
-function init(){if(localStorage.getItem('production-dashboard-theme')==='light'){document.body.classList.add('light');$('#themeToggle').textContent='◐'}renderPlant();renderGantt();renderRisks();renderOrders();renderAssistant();renderKpi();document.body.classList.add('is-dashboard');maybeSuggestEyeCare();$('#themeToggle').addEventListener('click',toggleTheme);$('#simulateButton').addEventListener('click',simulateInsert);$('#aiAssistantButton').addEventListener('click',requestAiAdvice);$('#manualInsertButton').addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.dataset.page==='reschedule'));renderModule('reschedule');document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});});$('#lockTask').addEventListener('click',toggleLock);document.querySelectorAll('[data-gantt-view]').forEach(b=>b.addEventListener('click',()=>setGanttView(b.dataset.ganttView)));document.querySelectorAll('[data-gantt-risk]').forEach(b=>b.addEventListener('click',()=>toggleGanttRisk()));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>renderModule(b.dataset.goto)));document.querySelectorAll('.kpi-card').forEach(card=>card.addEventListener('click',()=>focusFromKpi(card.dataset.filter)));document.querySelectorAll('.nav-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));item.classList.add('active');renderModule(item.dataset.page)}));}
+  }dashboard.hidden=true;view.hidden=false;$('#assistantPanel').hidden=false;$('.topbar h1').textContent=pageMeta[page][0];view.innerHTML=({schedule:schedulePage,orders:ordersPage,risks:risksPage,reschedule:reschedulePage,archive:archivePage,analysis:analysisPage,machines:machinesPage,data:dataPage}[page])();setupModule(page);}
+function init(){if(localStorage.getItem('production-dashboard-theme')==='light'){document.body.classList.add('light');$('#themeToggle').textContent='◐'}renderPlant();renderGantt();renderRisks();renderOrders();renderAssistant();renderKpi();document.body.classList.add('is-dashboard');maybeSuggestEyeCare();$('#themeToggle').addEventListener('click',toggleTheme);$('#rushInsertButton').addEventListener('click',openRushInsertForm);$('#aiAssistantButton').addEventListener('click',requestAiAdvice);$('#manualInsertButton').addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.dataset.page==='reschedule'));renderModule('reschedule');document.querySelector('.manual-insert-card')?.scrollIntoView({behavior:'smooth',block:'start'});});$('#lockTask').addEventListener('click',toggleLock);// 状态岛用事件委托绑定：renderStatusIsland() 每次 renderKpi 都会重建这批按钮，
+// 逐个 addEventListener 会随刷新不断堆积失效的旧监听。委托到 document 一劳永逸。
+document.addEventListener('click',event=>{
+  const row=event.target.closest('[data-order]');if(row)selectOrder(row.dataset.order);
+  const dot=event.target.closest('[data-island-status]');
+  if(dot){goMachineStatus(dot.dataset.islandStatus);return;}
+  if(event.target.closest('#islandAlert')){openUrgentAlert();return;}
+});document.querySelectorAll('[data-gantt-view]').forEach(b=>b.addEventListener('click',()=>setGanttView(b.dataset.ganttView)));document.querySelectorAll('[data-gantt-risk]').forEach(b=>b.addEventListener('click',()=>toggleGanttRisk()));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>renderModule(b.dataset.goto)));document.querySelectorAll('.kpi-card').forEach(card=>card.addEventListener('click',()=>focusFromKpi(card.dataset.filter)));document.querySelectorAll('.nav-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));item.classList.add('active');renderModule(item.dataset.page)}));}
 init();
 
 function normalizeHeader(value){return String(value||'').trim().toLowerCase().replace(/[\s_—-]/g,'');}
@@ -917,7 +1310,7 @@ document.addEventListener('click',event=>{if(event.target.closest('#dropZone')&&
 document.addEventListener('dragover',event=>{const zone=event.target.closest('#dropZone');if(zone){event.preventDefault();zone.classList.add('dragging');}});
 document.addEventListener('dragleave',event=>{const zone=event.target.closest('#dropZone');if(zone)zone.classList.remove('dragging');});
 document.addEventListener('drop',event=>{const zone=event.target.closest('#dropZone');if(!zone)return;event.preventDefault();zone.classList.remove('dragging');const file=event.dataTransfer.files[0];if(file)parseImportFile(file).catch(error=>{console.error(error);showToast('文件解析失败，请检查格式')});});
-document.addEventListener('submit',event=>{if(event.target.id!=='manualInsertForm')return;event.preventDefault();event.stopImmediatePropagation();const data=new FormData(event.target),orderId=data.get('orderId'),spec=data.get('spec'),quantity=data.get('quantity'),due=data.get('due'),material=data.get('material'),priority=data.get('priority'),zone=data.get('zone'),result=$('#manualInsertResult'),candidates=renderInsertCandidates({zone});result.hidden=false;result.innerHTML=`<b>已生成人工插单预览：${escapeHtml(orderId)}</b><span>${escapeHtml(spec)} · ${escapeHtml(quantity)} · ${escapeHtml(due.replace('T',' '))} · ${escapeHtml(material)}</span><span>优先级：${escapeHtml(priority)} · 首选工段：${escapeHtml(zone)}</span>${candidateMarkup(candidates)}${insertCompareMarkup()}`;result.querySelectorAll('[data-candidate-machine]').forEach(button=>button.addEventListener('click',()=>{result.querySelectorAll('[data-candidate-machine]').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');}));$('#confirmCandidate').addEventListener('click',()=>{const chosen=result.querySelector('.candidate-row.selected');showToast(`已提交人工确认：${chosen?.dataset.candidateMachine||'候选方案'}，等待算法引擎校验`);result.insertAdjacentHTML('beforeend','<div class="confirm-state good">已记录人工确认，尚未覆盖正式排程。</div>');});$('#rejectCandidate').addEventListener('click',()=>{showToast('已保留当前计划');result.insertAdjacentHTML('beforeend','<div class="confirm-state">已保留当前计划，未做排程变更。</div>');});showToast('人工插单已生成候选设备与影响预览');},true);
+document.addEventListener('submit',event=>{if(event.target.id!=='manualInsertForm')return;event.preventDefault();event.stopImmediatePropagation();const data=new FormData(event.target),orderId=data.get('orderId'),spec=data.get('spec'),quantity=data.get('quantity'),due=data.get('due'),material=data.get('material'),priority=data.get('priority'),zone=data.get('zone'),result=$('#manualInsertResult'),candidates=renderInsertCandidates({zone});setPriority(orderId,{紧急:2,高:1,常规:0}[priority]??2);result.hidden=false;result.innerHTML=`<b>已生成人工插单预览：${escapeHtml(orderId)}</b><span>${escapeHtml(spec)} · ${escapeHtml(quantity)} · ${escapeHtml(due.replace('T',' '))} · ${escapeHtml(material)}</span><span>优先级：${escapeHtml(priority)} · 首选工段：${escapeHtml(zone)}</span>${candidateMarkup(candidates)}${insertCompareMarkup()}`;result.querySelectorAll('[data-candidate-machine]').forEach(button=>button.addEventListener('click',()=>{result.querySelectorAll('[data-candidate-machine]').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');}));$('#confirmCandidate').addEventListener('click',()=>{const chosen=result.querySelector('.candidate-row.selected');showToast(`已提交人工确认：${chosen?.dataset.candidateMachine||'候选方案'}，等待算法引擎校验`);result.insertAdjacentHTML('beforeend','<div class="confirm-state good">已记录人工确认，尚未覆盖正式排程。</div>');});$('#rejectCandidate').addEventListener('click',()=>{showToast('已保留当前计划');result.insertAdjacentHTML('beforeend','<div class="confirm-state">已保留当前计划，未做排程变更。</div>');});showToast('人工插单已生成候选设备与影响预览');},true);
 
 // 把日期值格式化为 'YYYY-MM-DD'：Excel 日期经 SheetJS 解析成 Date 对象后，直接拼字符串会变成浏览器时区的英文长串（如英国夏令时），这里统一成干净的中性日期。
 function fmtDate(value){const pad=n=>String(n).padStart(2,'0');if(value instanceof Date && !isNaN(value.getTime())){let out=value.getFullYear()+'-'+pad(value.getMonth()+1)+'-'+pad(value.getDate());if(value.getHours()||value.getMinutes())out+=' '+pad(value.getHours())+':'+pad(value.getMinutes());return out;}if(value==null)return '';return String(value).trim();}
@@ -981,7 +1374,8 @@ function exportGanttPNG(){
   g.fillText('设备甘特图 · 当前计划',padLeft,28);
   g.font='12px sans-serif';g.fillStyle=light?'#385d71':'#a5bfce';
   g.fillText(`导出 ${new Date().toLocaleString('zh-CN')}`,padLeft,44);
-  const colors={normal:'#57ca8c',idle:'#3a9cff',change:'#f0b65a',risk:'#ef6b75'};
+  // 与状态岛 / 设备态势同一份配色（含 queued、维护、停机、停用），导出图不再自成一色
+  const colors=Object.fromEntries(STATUS_META.map(s=>[s.key,s.color]));
   rows.forEach((r,i)=>{
     const y=padTop+i*rowH;
     g.fillStyle=light?'#000000':'#d0e1eb';g.font='12px sans-serif';
@@ -1077,10 +1471,14 @@ function exportAnalysisReport(){
 
 function exportCurrentView(page){
   if(page==='orders'){
-    const head=orders[0],body=orders.slice(1);
+    const head=['订单号','产品规格','数量','交期','状态','优先级','延期容忍'];
+    const body=orders.slice(1).map(r=>{
+      const id=String(r[0]);
+      return [...r, priorityLabel(priorityLevel(id)), isTolerant(id)?'可延期3天':'不可延期'];
+    });
     const csv=[head,...body].map(r=>r.map(csvCell).join(',')).join('\r\n');
     downloadText(csv,`订单中心-${stamp()}.csv`,'text/csv;charset=utf-8');
-    showToast(`已导出订单中心 CSV（${body.length} 条）`);return;
+    showToast(`已导出订单中心 CSV（${body.length} 条，含优先级与延期容忍）`);return;
   }
   if(page==='machines'){
     const data=machines.map(m=>({设备编号:m.id,工段:m.zone,状态:m.status,当前订单:m.order,产品:m.product,材料:m.material,利用率:m.capacity,队列:m.queue,换型:m.change,风险:m.risk}));
@@ -1190,8 +1588,8 @@ window.applyAnalysisData = function (d) {
 window.applyBackendData = function (d) {
   if (!d) return;
   backendKpiLocked = true;   // 后端口径优先，前端不再自行推算 KPI
-  // 整体换数据前先丢弃前端推演的临时状态，否则撤回时会去改后端数据
-  inserted=false; insertSnapshot=null; lockedMachines.clear();
+  // 整体换数据前丢弃前端的临时锁定状态，避免与后端的正式计划交叉
+  lockedMachines.clear();
   if (Array.isArray(d.machines) && d.machines.length) machines = d.machines;
   if (Array.isArray(d.tasks) && d.tasks.length) tasks = d.tasks;
   if (Array.isArray(d.risks) && d.risks.length) risks = d.risks;
@@ -1218,10 +1616,18 @@ window.applyBackendData = function (d) {
 
   selected = machines.find(m => m.id === selected?.id) || machines[0];
   renderPlant(); renderGantt(); renderRisks(); renderOrders(); renderAssistant();
+  // 状态岛必须在这里显式刷新：上面刚把 machines 整体换掉，而 renderKpi() 一进来
+  // 就被 backendKpiLocked 短路，永远不会走到 KPI 赋值那几行 —— 不补这一句，
+  // 状态岛会一直挂着接入后端之前的演示分布（实测：岛上写「待排 17」，
+  // 点进去实际筛出 43 台，两处口径打架）。
+  // 先把紧急条目基线清空：否则「演示数据 → 后端数据」这次整体换源，
+  // 会被下面的新增判定当成「产线新增紧急信息 8 条」弹一次提示 —— 换源不是新增。
+  islandUrgentKey = null;
+  renderStatusIsland();
 
   const dot = document.querySelector('.live-dot');
   const foot = document.querySelector('.sidebar-foot');
   const eng = d.engines || {};
   if (dot) dot.textContent = '已接入后端';
-  if (foot) foot.innerHTML = 'V0.3 引擎已接入<br />设备 ' + ((d.kpi && d.kpi.device_total) || machines.length) + ' 台 · 排程 ' + (eng.tasks || 0) + ' 条';
+  if (foot) foot.innerHTML = '设备 ' + ((d.kpi && d.kpi.device_total) || machines.length) + ' 台 · 排程 ' + (eng.tasks || 0) + ' 条';
 };

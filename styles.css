@@ -1,7 +1,7 @@
 :root{--bg:#08131f;--surface:#0e1e2e;--surface2:#12283a;--surface3:#17334b;--line:#25435a;--text:#ebf3f8;--muted:#91a7b9;--blue:#3a9cff;--cyan:#43d4d0;--green:#57ca8c;--amber:#f0b65a;--red:#ef6b75;--shadow:0 18px 42px rgba(0,0,0,.2)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;font-size:14px}.app-shell{min-height:100vh;display:grid;grid-template-columns:196px minmax(720px,1fr) 292px;background:radial-gradient(circle at 46% 4%,#113252 0,transparent 36%),var(--bg)}button{font:inherit;cursor:pointer}.sidebar{border-right:1px solid var(--line);padding:22px 13px;display:flex;flex-direction:column;background:rgba(5,16,27,.64)}.brand-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid #4c7da0;border-radius:10px;background:linear-gradient(135deg,#1b5282,#11314f);font-weight:800;color:#cce8ff;letter-spacing:-1px}.brand-name{font-size:16px;font-weight:700;line-height:1.08;margin:12px 5px 30px}.brand-name span{color:#6dbaff}.nav{display:grid;gap:4px}.nav-item{display:flex;gap:11px;align-items:center;width:100%;border:0;border-radius:8px;background:none;color:#95adbd;text-align:left;padding:11px 12px}.nav-item span{font-size:17px;width:18px;text-align:center}.nav-item:hover,.nav-item.active{background:#173d5d;color:#ecf8ff}.nav-item.active{box-shadow:inset 2px 0 #46b9f4}.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:17px 5px 0;color:#7890a1;font-size:11px;line-height:1.75}.workspace{padding:27px 22px 30px;overflow:hidden}.topbar{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.eyebrow{text-transform:uppercase;letter-spacing:.1em;color:#6f96af;margin:0 0 5px;font-size:10px}h1,h2,p{margin:0}h1{font-size:23px;letter-spacing:.02em}h2{font-size:16px}.header-actions{display:flex;align-items:center;gap:10px}.live-dot{color:#a7ecca}.live-dot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px var(--green)}.shift-tag,.period{border:1px solid var(--line);border-radius:6px;color:#a9bcc8;padding:7px 10px;font-size:12px}.icon-button{width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:#d9ecf7}.primary-button,.assistant-action{border:0;border-radius:7px;padding:10px 14px;background:linear-gradient(90deg,#197cdd,#2fa8ed);color:#fff;font-weight:700;box-shadow:0 8px 18px rgba(29,139,225,.22)}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}.kpi-card{background:linear-gradient(160deg,rgba(24,52,75,.96),rgba(13,31,46,.96));border:1px solid var(--line);border-radius:10px;min-height:113px;padding:16px;text-align:left;color:var(--text);transition:.2s}.kpi-card:hover{border-color:#3b6d92;transform:translateY(-2px)}.kpi-card span,.kpi-card small{display:block;color:var(--muted)}.kpi-card strong{font-size:28px;display:inline-block;margin:8px 7px 4px 0}.kpi-card em{font-style:normal;font-size:11px}.good{color:var(--green)}.info{color:var(--cyan)}.warning{color:var(--amber)}.danger{color:var(--red)}.command-grid{display:grid;grid-template-columns:minmax(390px,1.45fr) minmax(280px,.8fr);gap:15px}.panel{background:linear-gradient(155deg,rgba(17,39,57,.95),rgba(9,25,38,.95));border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow)}.panel-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:16px 17px 11px}.legend{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px}.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}.normal{background:var(--green)}.idle{background:var(--blue)}.change{background:var(--amber)}.risk{background:var(--red)}.plant-map{position:relative;min-height:259px;padding:19px 19px 17px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;background:linear-gradient(125deg,rgba(38,74,96,.14),transparent 55%);overflow:hidden}.plant-map:before{content:"";position:absolute;width:120%;height:1px;background:linear-gradient(90deg,transparent,#2b6a7b,transparent);left:-10%;top:51%;transform:rotate(-7deg)}.plant-zone{z-index:1;position:relative;padding:12px 10px;border:1px solid #2c536b;border-radius:9px;background:linear-gradient(150deg,rgba(29,62,82,.76),rgba(9,28,43,.78));min-width:0}.zone-top{display:flex;justify-content:space-between;gap:5px;color:#c6ddeb;font-weight:700;font-size:12px}.zone-top span{color:#7fa8bd;font-size:10px}.machine-stack{height:141px;display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:12px;margin-top:11px}.machine{position:relative;border:0;background:none;min-width:0;height:55px;padding:0}.machine:before{content:"";position:absolute;inset:8px 4px 3px;border:1px solid currentColor;border-radius:5px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(0,0,0,.28));box-shadow:8px 8px 0 -5px rgba(5,13,20,.85),0 0 16px currentColor}.machine:after{content:"";position:absolute;left:30%;top:15px;width:40%;height:24px;border-radius:2px;background:currentColor;opacity:.7}.machine span{position:absolute;z-index:1;bottom:-5px;left:50%;transform:translateX(-50%);font-size:9px;color:#b6cad6;white-space:nowrap}.machine.normal{color:var(--green)}.machine.idle{color:var(--blue)}.machine.change{color:var(--amber)}.machine.risk{color:var(--red)}.zone-summary{font-size:10px;color:#8fa9b9;margin-top:5px}.trend-panel{min-height:300px}.trend-chart{height:201px;margin:4px 17px 0;position:relative;border-left:1px solid #27465c;border-bottom:1px solid #27465c}.chart-lines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 49px,rgba(65,111,137,.18) 50px)}.bars{position:absolute;inset:7px 12px 0;display:flex;align-items:end;justify-content:space-around;gap:9px}.bars i{display:block;width:10%;height:var(--h);border-radius:4px 4px 0 0;background:linear-gradient(#46b7f3,#276cba);box-shadow:0 0 13px rgba(53,159,234,.22)}.chart-labels{display:flex;justify-content:space-around;gap:6px;position:absolute;left:0;right:0;bottom:-22px;color:#7892a5;font-size:10px}.trend-footer{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:27px;padding:13px 17px;color:#8da5b5;font-size:11px}.trend-footer b{color:#def0fa;font-size:14px;margin-right:3px}.gantt-panel{margin-top:15px}.view-switch{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}.view-switch button{border:0;border-left:1px solid var(--line);padding:6px 9px;background:transparent;color:#8ca5b8;font-size:11px}.view-switch button:first-child{border:0}.view-switch .selected{background:#1b4261;color:#dbf4ff}.gantt-header,.gantt-row{display:grid;grid-template-columns:116px repeat(7,1fr);align-items:center}.gantt-header{padding:0 17px 6px;color:#7894a7;font-size:10px}.gantt-header span:first-child{font-size:11px}.gantt-rows{padding:0 17px 15px}.gantt-row{height:31px;border-top:1px solid rgba(48,81,102,.45)}.gantt-row label{color:#bfd0db;font-size:11px}.timeline{grid-column:2/9;height:100%;position:relative;background:repeating-linear-gradient(to right,transparent 0,transparent calc(14.28% - 1px),rgba(60,96,116,.38) calc(14.28% - 1px),rgba(60,96,116,.38) 14.28%)}.task{position:absolute;top:7px;height:17px;border:0;border-radius:4px;color:#fff;font-size:9px;text-align:left;padding-left:7px;overflow:hidden;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.2)}.task.normal{background:linear-gradient(90deg,#147ec3,#28b4df)}.task.change{background:linear-gradient(90deg,#bd8b2c,#efb75d)}.task.risk{background:linear-gradient(90deg,#bd4659,#ed7180)}.bottom-grid{display:grid;grid-template-columns:1fr 1.16fr;gap:15px;margin-top:15px}.text-button{border:0;background:none;color:#58b8e9;font-size:12px}.risk-list{padding:0 17px 14px}.risk-item{display:flex;align-items:start;gap:9px;padding:10px 0;border-top:1px solid rgba(48,81,102,.45);cursor:pointer}.risk-badge{width:7px;height:7px;border-radius:50%;margin-top:5px;flex:none}.risk-item b{font-size:12px}.risk-item p{font-size:11px;color:#8fa9ba;margin-top:3px}.risk-item time{margin-left:auto;color:#7d99ab;font-size:10px;white-space:nowrap}.orders-table{padding:0 17px 13px}.order-row{display:grid;grid-template-columns:1fr .8fr .72fr .9fr .6fr;gap:8px;border-top:1px solid rgba(48,81,102,.45);padding:9px 0;color:#9db4c2;font-size:11px}.order-row:first-child{color:#6f899c;font-size:10px}.order-row .hot{color:#f2c274}.order-row .at-risk{color:#f17882}.assistant-panel{border-left:1px solid var(--line);padding:23px 17px;background:linear-gradient(180deg,rgba(9,25,38,.96),rgba(6,17,27,.94));position:sticky;top:0;height:100vh;display:flex;flex-direction:column}.assistant-top{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px}.assistant-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(145deg,#785fe0,#2c9dda);color:#fff}.assistant-top p{font-weight:700}.assistant-top span{font-size:10px;color:#829bab}.assistant-content{padding-top:18px;display:grid;gap:15px}.assistant-content section{padding-bottom:15px;border-bottom:1px solid rgba(48,81,102,.5)}.assistant-content h3{font-size:11px;color:#73bfe6;margin:0 0 8px}.assistant-content p,.assistant-content li{color:#a8bdc9;font-size:12px;line-height:1.65}.assistant-content ul{padding-left:17px;margin:0}.constraint{display:inline-block;border:1px solid #35647c;border-radius:99px;padding:3px 7px;color:#9fd7ef;font-size:10px;margin:0 4px 5px 0}.assistant-action{margin-top:auto;width:100%}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:#204b62;border:1px solid #4c8ba7;border-radius:8px;padding:11px 16px;color:#e9fbff;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}body.light{--bg:#edf4f8;--surface:#ffffff;--surface2:#f2f8fb;--surface3:#e7f0f5;--line:#c8d9e2;--text:#132735;--muted:#58707f;--shadow:0 13px 30px rgba(49,79,97,.1)}body.light .app-shell{background:linear-gradient(140deg,#e7f5fb,#f5f8fa)}body.light .sidebar,body.light .assistant-panel{background:rgba(250,253,255,.92)}body.light .panel{background:linear-gradient(155deg,#fff,#f4f9fc)}body.light .plant-zone{background:linear-gradient(150deg,#edf8fc,#dcecf3)}body.light .gantt-row label{color:#426071}
-@media(max-width:1250px){.app-shell{grid-template-columns:72px minmax(650px,1fr) 270px}.brand-name,.nav-item{font-size:0}.nav-item span{font-size:18px}.nav-item{justify-content:center}.sidebar-foot{font-size:0}.sidebar-foot:first-letter{font-size:11px}.command-grid{grid-template-columns:1fr}.trend-panel{min-height:260px}}
-@media(max-width:980px){.app-shell{grid-template-columns:65px 1fr}.assistant-panel{display:none}.workspace{padding:20px 15px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.topbar{align-items:flex-start}.header-actions{flex-wrap:wrap;justify-content:flex-end}.bottom-grid{grid-template-columns:1fr}.plant-map{min-height:235px}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;font-size:14px}.app-shell{min-height:100vh;display:grid;transition:grid-template-columns .22s ease;grid-template-columns:var(--side-w,196px) minmax(var(--main-min,720px),1fr) 292px;background:radial-gradient(circle at 46% 4%,#113252 0,transparent 36%),var(--bg)}button{font:inherit;cursor:pointer}.sidebar{border-right:1px solid var(--line);padding:22px 13px;display:flex;flex-direction:column;background:rgba(5,16,27,.64)}.brand-mark{width:37px;height:37px;display:grid;place-items:center;border:1px solid #4c7da0;border-radius:10px;background:linear-gradient(135deg,#1b5282,#11314f);font-weight:800;color:#cce8ff;letter-spacing:-1px}.brand-name{font-size:16px;font-weight:700;line-height:1.08;margin:12px 5px 30px}.brand-name span{color:#6dbaff}.nav{display:grid;gap:4px}.nav-item{display:flex;gap:11px;align-items:center;width:100%;border:0;border-radius:8px;background:none;color:#95adbd;text-align:left;padding:11px 12px}.nav-item span{font-size:17px;width:18px;text-align:center}.nav-item:hover,.nav-item.active{background:#173d5d;color:#ecf8ff}.nav-item.active{box-shadow:inset 2px 0 #46b9f4}.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding:17px 5px 0;color:#7890a1;font-size:11px;line-height:1.75}.workspace{padding:27px 22px 30px;overflow:hidden}.topbar{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:22px}.eyebrow{text-transform:uppercase;letter-spacing:.1em;color:#6f96af;margin:0 0 5px;font-size:10px}h1,h2,p{margin:0}h1{font-size:23px;letter-spacing:.02em}h2{font-size:16px}.header-actions{display:flex;align-items:center;gap:10px}.live-dot{color:#a7ecca}.live-dot:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px var(--green)}.shift-tag,.period{border:1px solid var(--line);border-radius:6px;color:#a9bcc8;padding:7px 10px;font-size:12px}.icon-button{width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:#d9ecf7}.primary-button,.assistant-action{border:0;border-radius:7px;padding:10px 14px;background:linear-gradient(90deg,#197cdd,#2fa8ed);color:#fff;font-weight:700;box-shadow:0 8px 18px rgba(29,139,225,.22)}.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}.kpi-card{background:linear-gradient(160deg,rgba(24,52,75,.96),rgba(13,31,46,.96));border:1px solid var(--line);border-radius:10px;min-height:113px;padding:16px;text-align:left;color:var(--text);transition:.2s}.kpi-card:hover{border-color:#3b6d92;transform:translateY(-2px)}.kpi-card span,.kpi-card small{display:block;color:var(--muted)}.kpi-card strong{font-size:28px;display:inline-block;margin:8px 7px 4px 0}.kpi-card em{font-style:normal;font-size:11px}.good{color:var(--green)}.info{color:var(--cyan)}.warning{color:var(--amber)}.danger{color:var(--red)}.command-grid{display:grid;grid-template-columns:minmax(390px,1.45fr) minmax(280px,.8fr);gap:15px}.panel{background:linear-gradient(155deg,rgba(17,39,57,.95),rgba(9,25,38,.95));border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow)}.panel-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:16px 17px 11px}.legend{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px}.legend i{width:7px;height:7px;border-radius:50%;display:inline-block}.normal{background:var(--green)}.idle{background:var(--blue)}.change{background:var(--amber)}.risk{background:var(--red)}.plant-map{position:relative;min-height:259px;padding:19px 19px 17px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;background:linear-gradient(125deg,rgba(38,74,96,.14),transparent 55%);overflow:hidden}.plant-map:before{content:"";position:absolute;width:120%;height:1px;background:linear-gradient(90deg,transparent,#2b6a7b,transparent);left:-10%;top:51%;transform:rotate(-7deg)}.plant-zone{z-index:1;position:relative;padding:12px 10px;border:1px solid #2c536b;border-radius:9px;background:linear-gradient(150deg,rgba(29,62,82,.76),rgba(9,28,43,.78));min-width:0}.zone-top{display:flex;justify-content:space-between;gap:5px;color:#c6ddeb;font-weight:700;font-size:12px}.zone-top span{color:#7fa8bd;font-size:10px}.machine-stack{height:141px;display:grid;grid-template-columns:repeat(3,1fr);align-content:center;gap:12px;margin-top:11px}.machine{position:relative;border:0;background:none;min-width:0;height:55px;padding:0}.machine:before{content:"";position:absolute;inset:8px 4px 3px;border:1px solid currentColor;border-radius:5px;background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(0,0,0,.28));box-shadow:8px 8px 0 -5px rgba(5,13,20,.85),0 0 16px currentColor}.machine:after{content:"";position:absolute;left:30%;top:15px;width:40%;height:24px;border-radius:2px;background:currentColor;opacity:.7}.machine span{position:absolute;z-index:1;bottom:-5px;left:50%;transform:translateX(-50%);font-size:9px;color:#b6cad6;white-space:nowrap}.machine.normal{color:var(--green)}.machine.idle{color:var(--blue)}.machine.change{color:var(--amber)}.machine.risk{color:var(--red)}.zone-summary{font-size:10px;color:#8fa9b9;margin-top:5px}.trend-panel{min-height:300px}.trend-chart{height:201px;margin:4px 17px 0;position:relative;border-left:1px solid #27465c;border-bottom:1px solid #27465c}.chart-lines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 49px,rgba(65,111,137,.18) 50px)}.bars{position:absolute;inset:7px 12px 0;display:flex;align-items:end;justify-content:space-around;gap:9px}.bars i{display:block;width:10%;height:var(--h);border-radius:4px 4px 0 0;background:linear-gradient(#46b7f3,#276cba);box-shadow:0 0 13px rgba(53,159,234,.22)}.chart-labels{display:flex;justify-content:space-around;gap:6px;position:absolute;left:0;right:0;bottom:-22px;color:#7892a5;font-size:10px}.trend-footer{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:27px;padding:13px 17px;color:#8da5b5;font-size:11px}.trend-footer b{color:#def0fa;font-size:14px;margin-right:3px}.gantt-panel{margin-top:15px}.view-switch{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}.view-switch button{border:0;border-left:1px solid var(--line);padding:6px 9px;background:transparent;color:#8ca5b8;font-size:11px}.view-switch button:first-child{border:0}.view-switch .selected{background:#1b4261;color:#dbf4ff}.gantt-header,.gantt-row{display:grid;grid-template-columns:116px repeat(7,1fr);align-items:center}.gantt-header{padding:0 17px 6px;color:#7894a7;font-size:10px}.gantt-header span:first-child{font-size:11px}.gantt-rows{padding:0 17px 15px}.gantt-row{height:31px;border-top:1px solid rgba(48,81,102,.45)}.gantt-row label{color:#bfd0db;font-size:11px}.timeline{grid-column:2/9;height:100%;position:relative;background:repeating-linear-gradient(to right,transparent 0,transparent calc(14.28% - 1px),rgba(60,96,116,.38) calc(14.28% - 1px),rgba(60,96,116,.38) 14.28%)}.task{position:absolute;top:7px;height:17px;border:0;border-radius:4px;color:#fff;font-size:9px;text-align:left;padding-left:7px;overflow:hidden;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.2)}.task.normal{background:linear-gradient(90deg,#147ec3,#28b4df)}.task.change{background:linear-gradient(90deg,#bd8b2c,#efb75d)}.task.risk{background:linear-gradient(90deg,#bd4659,#ed7180)}.bottom-grid{display:grid;grid-template-columns:1fr 1.16fr;gap:15px;margin-top:15px}.text-button{border:0;background:none;color:#58b8e9;font-size:12px}.risk-list{padding:0 17px 14px}.risk-item{display:flex;align-items:start;gap:9px;padding:10px 0;border-top:1px solid rgba(48,81,102,.45);cursor:pointer}.risk-badge{width:7px;height:7px;border-radius:50%;margin-top:5px;flex:none}.risk-item b{font-size:12px}.risk-item p{font-size:11px;color:#8fa9ba;margin-top:3px}.risk-item time{margin-left:auto;color:#7d99ab;font-size:10px;white-space:nowrap}.orders-table{padding:0 17px 13px}.order-row{display:grid;grid-template-columns:1fr .8fr .72fr .9fr .6fr;gap:8px;border-top:1px solid rgba(48,81,102,.45);padding:9px 0;color:#9db4c2;font-size:11px}.order-row:first-child{color:#6f899c;font-size:10px}.order-row .hot{color:#f2c274}.order-row .at-risk{color:#f17882}.assistant-panel{border-left:1px solid var(--line);padding:23px 17px;background:linear-gradient(180deg,rgba(9,25,38,.96),rgba(6,17,27,.94));position:sticky;top:0;height:100vh;display:flex;flex-direction:column}.assistant-top{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px}.assistant-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(145deg,#785fe0,#2c9dda);color:#fff}.assistant-top p{font-weight:700}.assistant-top span{font-size:10px;color:#829bab}.assistant-content{padding-top:18px;display:grid;gap:15px}.assistant-content section{padding-bottom:15px;border-bottom:1px solid rgba(48,81,102,.5)}.assistant-content h3{font-size:11px;color:#73bfe6;margin:0 0 8px}.assistant-content p,.assistant-content li{color:#a8bdc9;font-size:12px;line-height:1.65}.assistant-content ul{padding-left:17px;margin:0}.constraint{display:inline-block;border:1px solid #35647c;border-radius:99px;padding:3px 7px;color:#9fd7ef;font-size:10px;margin:0 4px 5px 0}.assistant-action{margin-top:auto;width:100%}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:#204b62;border:1px solid #4c8ba7;border-radius:8px;padding:11px 16px;color:#e9fbff;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}body.light{--bg:#edf4f8;--surface:#ffffff;--surface2:#f2f8fb;--surface3:#e7f0f5;--line:#c8d9e2;--text:#132735;--muted:#58707f;--shadow:0 13px 30px rgba(49,79,97,.1)}body.light .app-shell{background:linear-gradient(140deg,#e7f5fb,#f5f8fa)}body.light .sidebar,body.light .assistant-panel{background:rgba(250,253,255,.92)}body.light .panel{background:linear-gradient(155deg,#fff,#f4f9fc)}body.light .plant-zone{background:linear-gradient(150deg,#edf8fc,#dcecf3)}body.light .gantt-row label{color:#426071}
+@media(max-width:1250px){.app-shell{grid-template-columns:var(--side-w,72px) minmax(var(--main-min,650px),1fr) 270px}.brand-name,.nav-item{font-size:0}.nav-item span{font-size:18px}.nav-item{justify-content:center}.sidebar-foot{font-size:0}.sidebar-foot:first-letter{font-size:11px}.command-grid{grid-template-columns:1fr}.trend-panel{min-height:260px}}
+@media(max-width:980px){.app-shell{grid-template-columns:65px minmax(0,1fr)}.assistant-panel{display:none}.workspace{padding:20px 15px}.kpi-grid{grid-template-columns:repeat(2,1fr)}.topbar{align-items:flex-start}.header-actions{flex-wrap:wrap;justify-content:flex-end}.bottom-grid{grid-template-columns:1fr}.plant-map{min-height:235px}}
 @media(max-width:620px){.workspace{padding:16px 10px}.sidebar{padding:16px 8px}.brand-mark{width:34px;height:34px}.topbar{display:block}.header-actions{justify-content:flex-start;margin-top:13px}.shift-tag{display:none}.kpi-grid{gap:8px}.kpi-card{min-height:100px;padding:12px}.kpi-card strong{font-size:23px}.plant-map{grid-template-columns:1fr;max-height:385px;overflow:auto}.machine-stack{height:86px}.command-grid{gap:10px}.gantt-panel{overflow:auto}.gantt-panel>*{min-width:650px}.orders-panel{overflow:auto}.orders-table{min-width:520px}.bottom-grid{gap:10px}.trend-panel{display:none}h1{font-size:20px}}
 
 /* 全量设备的等距数字孪生：真实 109 台设备以紧凑三维设备阵列呈现。 */
@@ -45,8 +45,8 @@ body.light .zone-top b{color:var(--ink-strong)!important}
 body.light .app-shell :is(p,span,b,strong,small,em,label,li,time,h1,h2,h3,button,input,select,.eyebrow,.module-note,.legend,.order-row,.data-table>div,.machine-record,.risk-action,.zone-top,.zone-summary,.facility-health){color:#000!important}
 body.light .primary-button,body.light .assistant-action{color:#fff!important}
 body.light .scenario button{color:#000!important}
-body.light .scene-machine.normal{color:var(--green)!important}body.light .scene-machine.idle{color:var(--blue)!important}body.light .scene-machine.change{color:var(--amber)!important}body.light .scene-machine.risk{color:var(--red)!important}
-body.light .scene-machine.normal i{color:#57ca8c!important}body.light .scene-machine.idle i{color:#3a9cff!important}body.light .scene-machine.change i{color:#f0b65a!important}body.light .scene-machine.risk i{color:#ef6b75!important}
+body.light .scene-machine.normal{color:var(--green)!important}body.light .scene-machine.queued{color:#22b8c4!important}body.light .scene-machine.idle{color:var(--blue)!important}body.light .scene-machine.change{color:var(--amber)!important}body.light .scene-machine.risk{color:var(--red)!important}
+body.light .scene-machine.normal i{color:#57ca8c!important}body.light .scene-machine.queued i{color:#22b8c4!important}body.light .scene-machine.idle i{color:#3a9cff!important}body.light .scene-machine.change i{color:#f0b65a!important}body.light .scene-machine.risk i{color:#ef6b75!important}
 
 /* 三栏独立滚动：左侧始终定位，中央工作区与右侧助手分别浏览。 */
 html,body{height:100%;overflow:hidden}.app-shell{height:100vh;min-height:0;overflow:hidden}.sidebar,.workspace,.assistant-panel{height:100vh;min-height:0}.sidebar{overflow-y:auto;overscroll-behavior:contain}.workspace{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain}.assistant-panel{position:static;overflow-y:auto;overscroll-behavior:contain}
@@ -313,7 +313,13 @@ body.is-dashboard .topbar{
   top:0;
   z-index:30;
   background:#08131f;
-  padding:14px 0 12px;
+  /* 顶部 64px 是给「灵动岛」预留的条带（岛绝对定位在这条带里，待在标题与
+     操作控件的**上方**）。岛既不参与流，也就不会把标题/三颗按钮挤变形，
+     悬停展开时也不会撑高顶栏。
+     为什么是 64 + 10：条带从下沿挪到上沿后，总高必须保持不变（62+12 与 64+10 同为 74px），
+     否则你的 696px 高视口里内容区会再少一截。药丸展开态实高 59px，居中在 64px 条带里
+     占 y=2.5~61.5，与标题（y=64 起）留 2.5px 气口。 */
+  padding:64px 0 10px;
   margin-bottom:12px;
 }
 /* 伪元素向上延伸背景，盖住 workspace 的 padding（27px 上 + 22px 左右），
@@ -331,3 +337,705 @@ body.light .topbar{background:#edf4f8}
 
 /* ---- 顶栏只在指挥总览页显示，其他页面完全隐藏（用户需求） ---- */
 body:not(.is-dashboard) .topbar{display:none}
+
+/* ---- 订单优先级与延期容忍（R8/R9 人工标注） ---- */
+/* 订单中心 7 列（比原来多一列「延期容忍」） */
+.order-table .data-head,.order-table .order-data{grid-template-columns:1.3fr 1.05fr .7fr 1fr .7fr .9fr .8fr;min-width:860px}
+/* 优先级标签：三档 */
+.pri-lv{font-size:12px;font-weight:700}
+.pri-0{color:#8da5b5}
+.pri-1{color:#f0b65a}
+.pri-2{color:#ef6b75}
+/* 延期容忍标签 */
+.tol-tag{display:inline-block;font-size:11px;font-weight:700;color:#57ca8c;border:1px solid #2e6b4d;border-radius:4px;padding:2px 6px;background:rgba(87,202,140,.1);cursor:help;white-space:nowrap}
+.tol-none{font-size:11px;color:#8da5b5;white-space:nowrap}
+/* 助手面板：优先级进度条 */
+.pri-row{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.pri-row input[type=range]{flex:1;accent-color:#2fa8ed}
+.pri-row b{min-width:2.6em;text-align:center;color:var(--ink-strong)}
+.pri-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:0 2px}
+/* 延期容忍开关 */
+.tol-switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-strong);cursor:pointer}
+.tol-switch input{accent-color:#2fa8ed}
+/* 浅色主题 */
+body.light .pri-row b,body.light .tol-switch{color:#000!important}
+body.light .pri-0{color:#58707f}
+body.light .pri-1{color:#a06b00}
+body.light .pri-2{color:#b5343f}
+body.light .tol-none{color:#58707f}
+body.light .tol-tag{color:#0a6b3a;border-color:#9ccdb0;background:rgba(12,163,12,.08)}
+
+/* ---- 设备台账管理（数据管理页） ---- */
+.device-mgr-form{display:flex;gap:10px;align-items:flex-end;margin-top:14px;flex-wrap:wrap}
+.device-mgr-form label{display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.device-mgr-form input,.device-mgr-form select{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:8px 10px;font-size:13px;min-width:140px}
+body.light .device-mgr-form label{color:#385d71!important}
+body.light .device-mgr-form input,body.light .device-mgr-form select{color:#000!important}
+
+/* ---- 设备维护/停机/停用状态色 + 故障闪烁 ---- */
+.maintenance{background:#8a9aa8}
+.fault{background:#b3202e;animation:fault-blink 1.2s ease-in-out infinite}
+.disabled{background:#55606a}
+/* queued = 后端词表里的「已排产」（已派单、待开工），与 idle「待排」（未派单）是两种状态。
+   早前漏了它，24 台已排产被兜底并进「生产」，状态岛与设备列表数字当场对不上。 */
+.queued{background:#22b8c4}
+/* 未登记状态：颜色由 JS 通过内联 --c 下发，保证换词表也不会丢掉状态色 */
+.status-unknown{background:var(--c,#7f8fa6)}
+@keyframes fault-blink{0%,100%{opacity:1}50%{opacity:.35}}
+/* 设备操作区 */
+.device-ops{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.device-ops button{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--ink-strong);padding:7px 12px;font-size:12px;cursor:pointer}
+.device-ops button:hover{border-color:var(--accent)}
+.device-op-form{display:flex;flex-direction:column;gap:8px;margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:7px;background:var(--surface2)}
+.device-op-form label{display:grid;gap:5px;font-size:12px;color:var(--muted)}
+.device-op-form input{background:var(--surface3);border:1px solid var(--line);border-radius:6px;color:var(--text);padding:7px 9px;font-size:12px}
+body.light .device-ops button,body.light .device-op-form label,body.light .device-op-form input{color:#000!important}
+body.light .device-op-form{background:#f2f8fb}
+
+/* ---- 品牌标识：君威钢绳索具圆形 logo ----
+   原为 37px 深蓝圆角方块 + "AI" 文字，现替换为企业圆形徽标。
+   图片已在源头抠图（圆形 alpha 蒙版、白底透明），这里只需圆形裁切 + 细描边，
+   保证在深色侧栏与浅色主题下都能与背景分离。 */
+.brand-mark{width:40px;height:40px;padding:0;border:0;border-radius:50%;background:none;overflow:hidden;box-shadow:0 0 0 1px rgba(110,190,255,.45),0 5px 14px rgba(0,0,0,.38)}
+.brand-mark img{width:100%;height:100%;display:block;border-radius:50%;object-fit:cover}
+body.light .brand-mark{box-shadow:0 0 0 1px rgba(28,110,170,.3),0 4px 10px rgba(20,70,110,.18)}
+@media(max-width:620px){.brand-mark{width:36px;height:36px}}
+
+/* ---- 修复：logo 在窗口高度较小时「消失」 ----
+   .sidebar 是纵向 flex 容器（display:flex;flex-direction:column）。当窗口高度
+   不足以放下全部侧栏内容（时钟 + 9 个导航 + 页脚）时，子项会按 flex-shrink
+   被等比压缩，.brand-mark 的 40px 高度会被压成 0px —— 图片其实加载正常
+   （complete=true、naturalWidth=256），只是被压扁成一条线。
+   这里禁止侧栏子项收缩；高度不够时改为侧栏内部滚动（.sidebar 已有 overflow-y:auto）。 */
+.sidebar>*{flex:0 0 auto}
+
+/* ---- 修复：窄屏（≤1250px）侧栏图标模式未生效 ----
+   断点里用 .nav-item{font-size:0} 把 72px 侧栏切成纯图标栏，但后面一条同特异性
+   的 .nav-item{font-size:16px} 又把它覆盖掉，文字被挤成竖排、侧栏高度暴涨到
+   1900px+，进一步触发上面的压缩问题。在末尾重新声明，让图标模式按设计生效。 */
+@media(max-width:1250px){.brand-name,.nav-item,.sidebar-foot{font-size:0}.nav-item span{font-size:18px}}
+
+/* ---- 顶栏「紧急插单」入口的落点高亮 ----
+   从总览页点按钮后会平滑滚到插单模板，这里给一次短暂的描边闪烁，
+   明确告诉用户「就是这里」，不用额外加提示条。用主题色 var(--blue)，浅色主题下同样可见。 */
+.manual-insert-card.flash-target{animation:mi-flash 1.8s ease-out 1}
+@keyframes mi-flash{
+  0%{outline:3px solid var(--blue);outline-offset:4px}
+  60%{outline:3px solid var(--blue);outline-offset:4px;opacity:.55}
+  100%{outline:3px solid transparent;outline-offset:4px;opacity:1}
+}
+
+/* ---- 顶栏三颗主操作按钮：大小与位置对齐 ----
+   对齐前实测（1440×900）：AI排产顾问 111.4×46（16px/800，10px 14px 内边距，1px 边框）、
+   人工调序 94×46（同上）、紧急插单 92×44.5（15px/700，11px 16px 内边距，无边框）。
+   三颗各自声明了一套盒模型，导致高度差 1.5px、字号字重不一致、宽度参差，视觉上不成组。
+   这里统一：等高、等宽（min-width）、同字号、同字重、同圆角，内容用 inline-flex 居中；
+   颜色仍保留各自语义（AI 紫蓝 / 人工调序 琥珀 / 紧急插单 蓝），只对齐尺寸与位置。
+   注意：.header-actions 已是 align-items:center，等高的三颗会自动上下取齐。 */
+.header-actions .ai-assistant-cta,
+.header-actions .manual-insert-cta,
+.header-actions .primary-button{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:46px;
+  min-width:116px;
+  padding:0 16px;
+  font-size:15px;
+  font-weight:800;
+  line-height:1;
+  border-radius:8px;
+  white-space:nowrap;
+}
+
+/* ---- 顶栏状态标签不再被主按钮挤成竖排 ----
+   原来 .header-actions 的 flex-wrap:wrap 只在 ≤980px 的断点里才打开，981–1250px 区间是 nowrap；
+   此时按钮变宽会挤压左侧的「已接入后端引擎」「夜班 · 20:00–08:00」。CJK 文本的 min-content
+   只有「一个字」宽，于是 flex 收缩把它们压成一行一个字的竖排（1280/1080 视口实测）。
+   这里让标签不参与收缩，并允许整行在放不下时折行 —— 窄屏退化成一列，而不是竖排字。 */
+.header-actions{flex-wrap:wrap}
+.header-actions>.live-dot,
+.header-actions>.shift-tag{flex:0 0 auto;white-space:nowrap}
+
+/* ---- 顶栏三颗主操作按钮：统一采用 AI 排产顾问的渐变 ----
+   注意：AI 排产顾问「真正生效」的渐变并不是它自己声明的 #6f5bd7→#3f9ee8，
+   而是被两轮对比度修复覆盖后的 linear-gradient(90deg,#4b3ba8,#1c6fb5)
+   （浅色 L172 / 深色 L222，两条都带 !important）。这里以「实际生效值」为准，
+   让「人工调序」「紧急插单」与它完全一致：同渐变、同白字、同投影，
+   三颗仅靠文案区分功能，视觉权重取齐（此前人工调序是纯琥珀、紧急插单是暗蓝，都不成组）。
+   选用 ID 选择器（特异性 1,0,0）是为了压过既有覆盖链：
+     body.light .app-shell .ai-assistant-cta      → (0,3,0) + !important
+     body.light .app-shell button.primary-button  → (0,3,1) + !important
+     button.primary-button                        → (0,1,1) + !important
+   仅靠追加同级类选择器是压不过的（同为 !important 时比特异性）。
+   color 必须跟着一起锁：人工调序原先是深字 #101b22，背景换成深渐变后
+   对比度只剩约 1.3:1（肉眼近乎不可读）—— 这一条是靠无头探针读 computed style 才发现的。
+   border 也一并统一为 1px 透明：紧急插单原为 border:0，另两颗为 1px，
+   补 1px 后三颗内部内容区宽度也完全一致（外框因 border-box 仍是 116×46）。 */
+#aiAssistantButton,
+#manualInsertButton,
+#rushInsertButton{
+  background:linear-gradient(90deg,#4b3ba8,#1c6fb5)!important;
+  color:#fff!important;
+  border:1px solid transparent!important;
+  box-shadow:0 8px 18px rgba(75,59,168,.28);
+}
+/* 悬停态也统一：三颗一律「原地提亮」，不再各走各的
+   （人工调序原本 hover 会整颗翻成琥珀 #ffd27d，破坏组感） */
+#aiAssistantButton:hover,
+#manualInsertButton:hover,
+#rushInsertButton:hover{
+  filter:brightness(1.12);
+}
+
+/* ============================================================
+   侧栏导航：默认图标态（72px 窄栏），悬停 / 键盘聚焦时「浮层覆盖」展开
+   诉求：用户要「鼠标悬停出现完整，非悬停只显示图标」，并明确要求**盖住**主内容
+   （浮层覆盖），不要推挤式展开。
+   要点：
+   ① 展开时侧栏 position:absolute 脱离网格流，但首列轨道宽度**不变**（恒 72px），
+      再加上列位钉死（见下方 .workspace / .assistant-panel 的 grid-column），
+      主内容与 AI 面板在展开前后坐标完全一致 —— 没有重排、没有抖动。
+   ② 图标在两种状态下位置完全一致（内容盒左侧恒为 14px）：靠 `gap:0→11px` 与
+      label 的 `max-width:0→150px` 两条过渡实现，展开时只有面板变宽 + 文字淡入。
+   ③ label 与品牌名**显式声明 font-size**，避免被 ≤1250px 断点里的
+      `.nav-item{font-size:0}` 吃掉（那套旧图标模式已被本方案取代）。
+   ④ 竖向留白：padding-top 18、品牌区与导航之间 14px 气口、导航项内边距 11px
+   ⑤ 展开态背景必须换成实色 —— 详见下方「展开态」一节，这是
+      「盖住之后底图看起来不是当前页面」的直接原因。
+   ============================================================ */
+
+/* 侧栏在全部断点都统一为 72px（原来 ≤980px 是 65px，图标会被挤） */
+@media(min-width:1251px){.app-shell{grid-template-columns:var(--side-w,72px) minmax(var(--main-min,720px),1fr) 292px}}
+@media(max-width:980px){.app-shell{grid-template-columns:var(--side-w,72px) minmax(0,1fr)}}
+
+.sidebar{
+  width:72px;
+  padding:18px 13px 10px;
+  overflow-x:hidden;
+  transition:width .22s ease;
+}
+.sidebar .brand-mark{align-self:center;transition:margin .22s ease}
+
+/* ---- 品牌区与导航之间的气口 ----
+   原先导航列表紧贴 logo 下沿（nav top = 54 = brandMark.bottom），而品牌标题是绝对定位
+   （top:15 + 两行 40px → 底 55px），于是标题第 2 行「指挥台」与第一个导航项「指挥总览」
+   **负间距 1px** —— 视觉上糊在一起。这里给导航加 14px 上外边距拉开。
+   注意：必须是**参与流**的间距（两种状态都生效），不能改成只在 hover 时出现，
+   否则展开瞬间整列导航项下移，鼠标正停在哪一项就会误点下一项。 */
+.sidebar .nav{margin-top:14px}
+
+/* 窄态：标题折叠（max-height 过渡），展开时再展开 */
+.sidebar .brand-name{
+  font-size:19px;
+  line-height:1.18;
+  max-height:0;
+  opacity:0;
+  margin:0;
+  overflow:hidden;
+  transition:opacity .16s ease,max-height .24s ease,margin .24s ease;
+}
+.sidebar .nav-item{
+  gap:0;
+  /* 竖向内边距 11→10px：把顶部新增的 18px 留白（padTop +4 / 品牌与导航间 14px 气口）
+     从导航项自身匀回来，侧栏总高维持不变 —— 否则窗口高度 ≤611px 时会多出一条滚动，
+     页脚会被切掉。9 项共省 18px，正好抵消。 */
+  padding:10px 14px;
+  transition:gap .24s ease,background .16s ease;
+}
+.sidebar .nav-item .nav-icon{font-size:18px;width:18px;flex:0 0 18px;text-align:center}
+.sidebar .nav-item .nav-label{
+  font-size:15px;
+  width:auto;
+  text-align:left;
+  white-space:nowrap;
+  max-width:0;
+  opacity:0;
+  overflow:hidden;
+  transition:max-width .24s ease,opacity .16s ease;
+}
+.sidebar .sidebar-foot{
+  font-size:11px;
+  white-space:nowrap;
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  padding-top:0;
+  border-top-width:0;                     /* 边框宽度也要收，否则窄态仍留一条 1px 细线 */
+  border-top-color:transparent;
+  transition:opacity .16s ease,max-height .24s ease,padding .24s ease,border-top-width .24s ease;
+}
+
+/* ---- 关键：侧栏脱离文档流后，后续项会被 grid 自动放置「前移一个格子」 ----
+   实测事故：侧栏一旦 position:absolute，`workspace` 从 x=72/宽1076 变成 x=0/宽72，
+   `assistant-panel` 顶到第 2 列。于是侧栏盖住的那块露出来的是「被压扁重排过的另一套布局」，
+   看起来就像底图不是当前页面。
+   修法：把工作区与 AI 面板的列位显式钉死；侧栏浮起后两者仍待在原列，布局零位移。
+   （侧栏是首列唯一的项，它脱离后首列仍是 72px 的固定轨道，只是暂时空着被浮层盖住。） */
+.workspace{grid-column:2}
+.assistant-panel{grid-column:3}
+
+/* ---- 展开态：悬停 / 键盘聚焦 → 浮层「盖住」主内容 ----
+   用户明确要盖住，所以用 position:absolute 浮层，不用推挤。
+   与推挤方案的区别：--side-w 常量**不变**（恒 72px），首列轨道宽度不动，
+   因此展开前后主内容与 AI 面板的坐标完全一致（实测 x / 宽度零变化），无重排无抖动。
+   浮层覆盖「72px 空轨道 + 主内容左侧 128px」，这是盖住方案的预期行为。
+
+   三个必须做对的点（浮层方案第一次失败就栽在这里）：
+   ① 列位钉死（见上一条）—— 否则 grid 自动放置会把整页重排。
+   ② 展开态背景必须**实色**。基础规则里 .sidebar 是 rgba(5,16,27,.64)（深色主题）
+      与 rgba(250,253,255,.92)（浅色主题），半透明面板压在正文上会产生「重影」：
+      底下的卡片与文字透过面板显出来 —— 这就是「盖住之后的底图不知道哪来的、
+      不是当前页面」。展开态换成等值实色，视觉结果与窄态完全一致，展开瞬间无变色跳变：
+        深色 0.64×rgb(5,16,27) + 0.36×(--bg #08131f) = rgb(6,17,28)  = #06111c
+        浅色 0.92×rgb(250,253,255) + 0.08×(左侧渐变起点 #e7f5fb) = rgb(249,252,255) = #f9fcff
+   ③ 必须显式给 z-index。工作区里存在带 z-index 的定位元素（如
+      .factory-view-toolbar{z-index:5}），position:absolute 且 z-index:auto 的浮层
+      在绘制顺序上排在它们之下，会出现「面板被正文元素穿透」的穿帮。
+   只在 ≥981px 生效：≤980px 是移动端布局（html/body 已改为 height:auto / overflow:auto），
+   侧栏参与正常流，不做浮层。 */
+@media(min-width:981px){
+  .sidebar:hover,
+  .sidebar:focus-within{
+    position:absolute;
+    left:0;
+    top:0;
+    width:200px;
+    height:100vh;
+    z-index:70;
+    background:#06111c;
+    box-shadow:8px 0 26px rgba(0,0,0,.42);
+  }
+  /* 浅色主题：实色底 + 轻投影 */
+  body.light .app-shell .sidebar:hover,
+  body.light .app-shell .sidebar:focus-within{
+    background:#f9fcff;
+    box-shadow:8px 0 26px rgba(20,60,90,.14);
+  }
+  .sidebar:hover .brand-mark,
+  .sidebar:focus-within .brand-mark{align-self:flex-start;margin-left:3px}
+  /* 注：品牌名的展开态见文件更下方的「品牌区：展开时 logo + 右侧标题横排」一节。
+     那里用 position:absolute 让它脱离文档流，因此这里不再需要参与流的 max-height/margin 展开。 */
+  .sidebar:hover .nav-item,
+  .sidebar:focus-within .nav-item{gap:11px}
+  .sidebar:hover .nav-item .nav-label,
+  .sidebar:focus-within .nav-item .nav-label{max-width:150px;opacity:1}
+  .sidebar:hover .sidebar-foot,
+  .sidebar:focus-within .sidebar-foot{
+    max-height:48px;opacity:1;padding-top:12px;
+    border-top-width:1px;border-top-color:var(--line);
+  }
+}
+
+/* ---- 品牌区：展开时「logo + 右侧标题」横排，**不推挤导航** ----
+   为什么必须脱离文档流：最初把标题做成参与流的展开块，实测展开时 9 个导航项
+   被整体下推约 69px —— 如果鼠标正停在某一项上，展开后光标会落到相邻项上，
+   想点「风险预警」可能点到「智能排产」，这是真实的误点风险。
+   改成 absolute 后，实测两种状态下 nav-item 的 y 均为 54px，导航完全不动。
+   窄态（72px）时标题定位在 left:64px，超出内容盒，被 .sidebar 的 overflow-x:hidden 裁掉。 */
+.sidebar{position:relative}   /* 提供定位上下文；:hover 的 absolute 特异性更高，不受此条影响 */
+.sidebar .brand-name{
+  position:absolute;
+  left:64px;
+  top:19px;
+  width:124px;
+  font-size:17px;
+  line-height:1.18;
+  max-height:none;
+  margin:0;
+  opacity:0;
+  transform:translateX(-6px);
+  overflow:visible;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .22s ease;
+}
+.sidebar:hover .brand-name,
+.sidebar:focus-within .brand-name{
+  opacity:1;
+  transform:none;
+  margin:0;
+  max-height:none;
+}
+
+/* ============================================================
+   顶部「灵动岛 · 钢索」——悬在吸顶顶栏**上沿**条带里，水平居中、常驻
+   诉求演变（2026-09-19 下午）：
+     ① 原先放在 #dashboardContent 顶部 → 会随内容滚走，用户反馈「岛呢」；
+     ② 改为顶栏的**下沿** → 用户截图圈出「系统在线 / 夜班 / 设置」那排操作控件，
+        说「放在这部分内容的上部」，即岛要在那排控件的**上方**；
+     ③ 现落在顶栏**上沿**，并做成**灵动岛**形态：一枚常驻的悬浮药丸，默认紧凑
+        （彩色圆环 + 圈内台数），悬停 / 键盘聚焦时连同圆环与状态名一起「长大」；
+     ④ 外观是**钢索**（钢丝绳）：药丸柱面用金属竖向渐变，表面叠两向交叉的捻股纹理，
+        引导字左侧配一枚「钢丝绳断面」徽标。深色 = 暗钢绳，浅色 = 不锈钢亮钢索。
+   几何：顶栏 sticky → 岛常驻不随内容滚动；顶栏宽 = 工作区宽 → 岛在其中水平居中。
+   药丸是绝对定位的浮层，**不参与流**，所以既撑不高顶栏，也推挤不到标题与操作控件。
+   为什么不做成「嵌在标题与按钮之间的空隙里」：实测 1422 视口下那道空隙只有 127px，
+   而一排 8 个圆环要 266px；且顶栏的几何中心被右侧操作区整个占据
+   （1422 下操作区横跨 404~1090，中心 592 落在其内部）。所以只能另起一条带。
+   圆环内圈的挖空色**必须约等于药丸中段底色**（--pill-face），否则会像"打穿的孔"。
+   ============================================================ */
+.status-island{
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;                 /* 条带贴在顶栏**上沿**（标题与操作控件的上方），不是下沿 */
+  height:64px;           /* 必须 ≥ 展开态药丸实高（59px），否则展开时上下会被裁 */
+  display:block;
+  pointer-events:none;   /* 条带不挡点击；只有内部内容可交互 */
+
+  /* ---- 「灵动岛·钢索」调色板（深色主题 = 暗钢绳） ----
+     pill-1..4 是药丸竖向的金属柱面渐变（上亮下暗，模拟圆股钢索的圆柱受光）；
+     face 是圆环内孔的挖空色，必须约等于药丸中段底色，否则圆环会像"打穿的洞"；
+     捻股纹理的亮暗线直接写在 .island-inner 的 background-image 里（深色/浅色各一套）。 */
+  --pill-1:#6d8698;
+  --pill-2:#3f566a;
+  --pill-3:#22333f;
+  --pill-4:#131f2a;
+  --pill-face:#1e2d3b;
+  --pill-stroke:rgba(146,190,222,.5);
+  --pill-glow:rgba(255,255,255,.24);
+  --pill-shadow:0 0 0 1px rgba(0,0,0,.55),0 14px 26px -10px rgba(0,0,0,.85);
+  --pill-text:#b3cddc;
+  --pill-sub:#93afc0;
+  --pill-track:rgba(148,178,196,.2);      /* 圆环未占比的轨道色 */
+  --pill-zero:#6f8a9b;                    /* 0 台状态的数字色 */
+  --pill-hover:rgba(255,255,255,.07);
+
+  /* ---- GT8 断面的三色（钢丝 / 钢丝描边 / 纤维绳芯） ---- */
+  --rw-fill:#e9f2f8;
+  --rw-stroke:#0a141d;
+  --rw-core:#1b4a85;
+  --ring-wire:rgba(0,0,0,.55);            /* 状态环上的股线分界线 */
+}
+/* 灵动岛本体 = 一枚常驻的「钢索药丸」。
+   纹理：两向 repeating-linear-gradient 交叉 —— 74deg 的亮线/暗线是捻股的主螺旋，
+   -14deg 的极淡线是反向次股，交叉处出现编织的斜方格，就是钢丝绳表面的样子。
+   立体：竖向四段金属渐变（上亮下暗）+ 顶部内高光 + 底部内阴影 + 外投影。
+   交互：悬停/键盘聚焦时**长大**（内边距 + 圆环 + 状态名同时推进），
+   缓动用带过冲的 cubic-bezier，产生"灵动岛"那种弹一下的变形手感。 */
+.island-inner{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  align-items:center;
+  gap:0;                     /* 展开内容在 .island-body 里，间距由它自己给 */
+  padding:4px;               /* 静止态 = 断面 36 + 4×2 = **44×44 的正圆**，只有断面 */
+  border:1px solid var(--pill-stroke);
+  border-radius:999px;
+  background-image:
+    /* 金属反光带：管状金属在环境中部常有一条横向高光，缺了它整块会显得像塑料。
+       放在最上层，才能压在捻股纹理之上（background-image 首个 = 最上）。 */
+    linear-gradient(180deg,transparent 46%,rgba(255,255,255,.1) 53%,rgba(255,255,255,.03) 61%,transparent 68%),
+    /* 主捻股：周期 7px 的「暗-亮-平-暗」四段，模拟每一股圆钢丝的受光面与背光面。
+       周期必须够粗（≥6px），否则在 1x 屏上会退化成一层灰雾，看不出是钢丝绳。 */
+    repeating-linear-gradient(76deg,
+      rgba(0,0,0,.42) 0 1.4px,
+      rgba(255,255,255,.15) 1.4px 3px,
+      rgba(255,255,255,.02) 3px 5.2px,
+      rgba(0,0,0,.2) 5.2px 7px),
+    /* 反向次股：更淡更粗，与主捻股交叉出编织的斜方格 */
+    repeating-linear-gradient(-16deg,rgba(255,255,255,.06) 0 2.5px,transparent 2.5px 11px),
+    /* 金属柱面：上亮下暗四段，是「圆管受光」的骨架 */
+    linear-gradient(180deg,var(--pill-1) 0,var(--pill-2) 44%,var(--pill-3) 76%,var(--pill-4) 100%);
+  box-shadow:
+    var(--pill-shadow),
+    inset 0 1px 0 var(--pill-glow),
+    inset 0 -1px 0 rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(0,0,0,.22);
+  white-space:nowrap;
+  pointer-events:auto;
+  transition:padding .32s cubic-bezier(.34,1.42,.6,1),
+             border-color .22s ease,
+             box-shadow .26s ease,
+             filter .22s ease;
+}
+/* 岛首的「神虎 GT8 钢丝绳断面」—— 8 股环绕绳芯，股缝里透出蓝色纤维芯。
+   这是整个岛的品牌落款：岛 = 一段被切断的 GT8 钢索，左端是断面，右段是绳体。
+   SVG 由 app.js 的 ropeCrossSectionSVG() 注入（76 个圆：8 股×7 丝 + 中心 19 丝束芯
+   + 1 片蓝色垫底，这种六角密排 CSS 画不出来）。 */
+/* 展开时才存在的那一整条：说明字 + 8 个状态环 + 紧急胶囊。
+   静止态 max-width:0 + opacity:0，靠悬停 / 键盘聚焦把它「推」出来。
+   药丸本身水平居中（left:50% + translate(-50%)），所以是**从断面位置向两侧对称绽开**，
+   不是从左边滑进来 —— 这是灵动岛最关键的手感差别。
+   上下的 3px 内边距 + -3px 外边距是给 overflow:hidden 用的：让裁剪框比内容盒高 3px，
+   状态环悬停时 translateY(-2px) 抬起的那 2px 才不会被切掉，而布局高度分文不涨。 */
+.island-body{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  max-width:0;
+  margin:-3px 0 -3px 0;
+  padding:3px 0;
+  opacity:0;
+  overflow:hidden;
+  transition:max-width .4s cubic-bezier(.34,1.28,.62,1),
+             margin-left .4s cubic-bezier(.34,1.28,.62,1),
+             opacity .24s ease;
+}
+.status-island:hover .island-body,
+.status-island:focus-within .island-body{max-width:1100px;margin-left:9px;opacity:1}
+.island-lead-txt{font-size:11px;letter-spacing:.1em;color:var(--pill-text);white-space:nowrap}
+.island-rope{
+  position:relative;
+  flex:0 0 auto;
+  width:36px;                /* 比 8 个状态环（26px）大一圈，断面才压得住场面 */
+  height:36px;
+  display:block;
+  /* 断面是「切面」，给它一点自己的纵深，别像贴在药丸上的一张图 */
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.55));
+  transition:width .3s cubic-bezier(.34,1.42,.6,1),height .3s cubic-bezier(.34,1.42,.6,1);
+}
+.island-rope svg{display:block;width:100%;height:100%;overflow:visible}
+/* 每根钢丝：亮白钢丝 + 深色描边。描边不能省 —— 参考图的「钢丝感」全部来自
+   圆与圆之间的那圈黑线，去掉就退化成一坨白斑。 */
+.island-rope .rw-wire{fill:var(--rw-fill);stroke:var(--rw-stroke);stroke-width:1.1}
+.island-rope .rw-core{fill:var(--rw-core)}
+/* 静止态只剩一枚断面，紧急信息就没有地方写了 —— 所以给它点一颗会脉冲的红点。
+   这是「常驻简洁」与「不漏掉紧急信息」之间必须做的补偿：不能因为收起了条带，
+   就把停机/风险/逾期这类信息一起藏起来。 */
+.island-rope::after{
+  content:'';
+  position:absolute;
+  right:-1px;
+  top:-1px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#ef6b75;
+  box-shadow:0 0 0 2px var(--pill-face);
+  opacity:0;
+  transform:scale(.4);
+  transition:opacity .2s ease,transform .28s cubic-bezier(.34,1.5,.6,1);
+}
+.status-island.has-alert .island-rope::after{opacity:1;transform:scale(1);animation:ropeAlertPulse 1.8s ease-out infinite}
+/* 不能复用 .island-alert>i 那套 islandPulse：关键帧里的 box-shadow 会**整个覆盖**
+   上面那条 `0 0 0 2px var(--pill-face)` 分隔环，红点就会糊在断面上、看不出是个通知点。
+   所以这里每帧都把分隔环一起写回去。 */
+@keyframes ropeAlertPulse{
+  0%{box-shadow:0 0 0 2px var(--pill-face),0 0 0 0 rgba(239,107,117,.66)}
+  70%{box-shadow:0 0 0 2px var(--pill-face),0 0 0 9px rgba(239,107,117,0)}
+  100%{box-shadow:0 0 0 2px var(--pill-face),0 0 0 0 rgba(239,107,117,0)}
+}
+@media(prefers-reduced-motion:reduce){.status-island.has-alert .island-rope::after{animation:none}}
+.island-dots{display:flex;align-items:center;gap:5px}
+.island-dot{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:2px 3px;
+  border:0;
+  border-radius:9px;
+  background:none;
+  font:inherit;
+  cursor:pointer;
+  transition:transform .16s ease,background .16s ease;
+}
+.island-dot:hover,.island-dot:focus-visible{transform:translateY(-2px);background:var(--pill-hover)}
+/* 圆圈本体：外圈 conic-gradient 表示占比，内圈挖空显示数字。
+   内孔的挖空色走 --pill-face（≈药丸中段底色），换主题时不必再改这里。
+   2026-09-19：环上再叠一层 30° 周期的细射线（每圈 12 道），把平滑的色环切成
+   **一束钢丝** —— 这正是参考图里每股钢索断面的样子（12 根外围丝 + 中心束芯）。
+   射线的宽度必须换算成屏幕像素：26px 圆环半径 11px、周长约 69px，
+   0.5px 的可见下限 → 0.5/69×360 ≈ 2.6deg。写 1deg 会被抗锯齿抹成灰雾。 */
+.island-dot .ring{
+  position:relative;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    repeating-conic-gradient(from 0deg,var(--ring-wire,rgba(0,0,0,.55)) 0 var(--wire-w,2.6deg),transparent var(--wire-w,2.6deg) 30deg),
+    conic-gradient(var(--c) calc(var(--p,0) * 1%),var(--pill-track,rgba(148,178,196,.2)) 0);
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.12);
+  transition:width .3s cubic-bezier(.34,1.42,.6,1),height .3s cubic-bezier(.34,1.42,.6,1);
+}
+.island-dot .ring::before{content:'';position:absolute;inset:2.5px;border-radius:50%;background:var(--pill-face)}
+.island-dot .ring b{
+  position:relative;
+  font-size:11px;
+  font-weight:800;
+  color:var(--c);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;
+  text-shadow:0 1px 1px rgba(0,0,0,.5);
+}
+.island-dot.dense .ring b{font-size:9px}   /* 三位数（≥100 台）缩字号，避免撑破圆圈 */
+.island-dot .cap{
+  font-size:9.5px;
+  line-height:1.1;
+  color:var(--pill-sub);
+  white-space:nowrap;
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transition:max-height .28s cubic-bezier(.34,1.42,.6,1),opacity .18s ease;
+}
+/* 该状态 0 台：整圈转灰，仍然占位，保证图例始终是完整的 8 项。
+   注意要把射线层一起写回来 —— background 简写会把上面那层股线纹理整个清掉。 */
+.island-dot.zero .ring{
+  background:
+    repeating-conic-gradient(from 0deg,var(--ring-wire,rgba(0,0,0,.55)) 0 var(--wire-w,2.6deg),transparent var(--wire-w,2.6deg) 30deg),
+    conic-gradient(var(--pill-track,rgba(148,178,196,.26)) 0 100%);
+}
+.island-dot.zero .ring b{color:var(--pill-zero,#6f8a9b)}
+.island-dot.zero .cap{color:var(--pill-sub);opacity:.72}
+
+/* ---- 展开态：悬停 / 键盘聚焦。药丸「长大」——水平加宽、圆环变大、状态名淡入，
+   垂直方向靠 ring 26→32 与 cap 0→11 自然增高（42 → 59px），仍装在 64px 条带里。
+   居中位置不变，所以鼠标扫过时不会左右漂移。 ---- */
+.status-island:hover .island-inner,
+.status-island:focus-within .island-inner{
+  padding:5px 18px;
+  border-color:rgba(158,206,238,.62);
+  box-shadow:
+    0 16px 32px -12px rgba(0,0,0,.9),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -1px 0 rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(0,0,0,.22);
+  filter:brightness(1.07);
+}
+/* 断面也跟着长大：30 → 38px。它和圆环同步「弹」一下，整枚药丸才像同一个物体在变形。
+   高度必须 ≤ 行内容高度（展开态 45px），否则药丸会长得比条带还高。 */
+.status-island:hover .island-rope,
+.status-island:focus-within .island-rope{width:44px;height:44px}
+.status-island:hover .island-dot .ring,
+.status-island:focus-within .island-dot .ring{width:32px;height:32px}
+.status-island:hover .island-dot .ring::before,
+.status-island:focus-within .island-dot .ring::before{inset:3px}
+.status-island:hover .island-dot .ring b,
+.status-island:focus-within .island-dot .ring b{font-size:12px}
+.status-island:hover .island-dot .cap,
+.status-island:focus-within .island-dot .cap{max-height:11px;opacity:1}
+
+/* 紧急信息提醒：只在真的存在紧急条目时由 JS 摘掉 hidden。
+   注意：.island-alert{display:inline-flex} 与 UA 的 [hidden]{display:none} 同特异性，
+   作者样式优先 —— 不补这条 [hidden] 规则，没有紧急信息时也会常驻一个红框。 */
+.island-alert{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border:1px solid rgba(239,107,117,.6);
+  border-radius:999px;              /* 与钢索药丸同为胶囊形，嵌在里面才不突兀 */
+  background:rgba(239,107,117,.16);
+  color:#ffd6da;
+  font:inherit;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+  transition:background .16s ease,transform .16s ease;
+}
+.island-alert[hidden]{display:none}
+.island-alert:hover{background:rgba(239,107,117,.3);transform:translateY(-1px)}
+.island-alert>i{width:7px;height:7px;border-radius:50%;background:#ef6b75;animation:islandPulse 1.8s ease-out infinite}
+.island-alert b{font-variant-numeric:tabular-nums}
+@keyframes islandPulse{
+  0%{box-shadow:0 0 0 0 rgba(239,107,117,.66)}
+  70%{box-shadow:0 0 0 8px rgba(239,107,117,0)}
+  100%{box-shadow:0 0 0 0 rgba(239,107,117,0)}
+}
+@media(prefers-reduced-motion:reduce){.island-alert>i{animation:none}}
+
+/* ---- 浅色主题 = 不锈钢「亮钢索」，与深色的暗钢绳是两套独立设计 ----
+   深色靠"上亮下暗的炭黑柱面 + 冷蓝捻股高光"；浅色换成拉丝不锈钢：
+   近白的高光带 + 淡蓝灰柱面，且捻股纹理要"亮线更强、暗线更淡"，
+   否则在浅底上会显出脏灰。圆环内孔 / 引导字 / 悬停底色全走同一套局部变量，
+   所以换主题只需要覆盖变量，不必再逐条改选择器。 */
+body.light .status-island{
+  --pill-1:#ffffff;
+  --pill-2:#e3ecf4;
+  --pill-3:#c6d4e0;
+  --pill-4:#a8bbc9;
+  --pill-face:#e9f1f7;
+  --pill-stroke:rgba(104,146,178,.5);
+  --pill-glow:rgba(255,255,255,.95);
+  --pill-shadow:0 0 0 1px rgba(86,126,156,.3),0 12px 22px -10px rgba(22,64,96,.42);
+  --pill-text:#3a6079;
+  --pill-sub:#3f657c;
+  --pill-track:rgba(120,155,180,.34);
+  --pill-zero:#5b7a8d;
+  --pill-hover:rgba(28,110,170,.09);
+
+  /* 浅色下断面换成「不锈钢亮丝」：钢丝更白、描边转冷灰蓝（纯黑在浅底上太生硬），
+     绳芯的蓝加深一档，否则会跟不锈钢抢注意力。 */
+  --rw-fill:#ffffff;
+  --rw-stroke:#33506a;
+  --rw-core:#1d5c9e;
+  --ring-wire:rgba(30,64,92,.42);
+}
+/* 不锈钢的捻股必须「亮线更强、暗线极淡」：同样的深色暗线画在浅底上会变成条纹布。
+   深色主题那套 0.42 的暗线直接搬到浅色上，实测放大后是"斜纹衬衫"而不是钢索，
+   所以这里整组换掉纹理，并额外加一条近白的反光带（浅底上反光必须更强才看得见）。 */
+body.light .island-inner{
+  background-image:
+    linear-gradient(180deg,transparent 46%,rgba(255,255,255,.75) 53%,rgba(255,255,255,.25) 61%,transparent 68%),
+    repeating-linear-gradient(76deg,
+      rgba(108,144,174,.13) 0 1.3px,
+      rgba(255,255,255,.85) 1.3px 3.2px,
+      rgba(255,255,255,.45) 3.2px 5.4px,
+      rgba(108,144,174,.05) 5.4px 7px),
+    repeating-linear-gradient(-16deg,rgba(255,255,255,.8) 0 2.5px,transparent 2.5px 11px),
+    linear-gradient(180deg,var(--pill-1) 0,var(--pill-2) 44%,var(--pill-3) 76%,var(--pill-4) 100%);
+}
+body.light .app-shell .status-island:hover .island-inner,
+body.light .app-shell .status-island:focus-within .island-inner{
+  border-color:rgba(96,146,182,.72);
+  filter:none;                     /* 浅色不需要再提亮，否则高光带会过曝 */
+  box-shadow:
+    0 14px 26px -10px rgba(22,64,96,.42),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -1px 0 rgba(120,150,175,.4),
+    inset 0 0 0 1px rgba(255,255,255,.6);
+}
+body.light .island-dot .ring{box-shadow:0 0 0 1px rgba(60,100,130,.22),inset 0 1px 1px rgba(255,255,255,.85)}
+body.light .island-dot .ring b{text-shadow:0 1px 0 rgba(255,255,255,.75)}
+/* 浅色主题的断面不另画一套 —— 钢丝/描边/绳芯三色已收进 --rw-* 变量，
+   这里只需要把投影从"深色压暗"换成"浅色轻浮"，否则白钢丝会糊在浅色药丸上。 */
+body.light .island-rope{filter:drop-shadow(0 1px 1px rgba(30,80,110,.3))}
+body.light .island-alert{background:rgba(214,58,72,.1);border-color:rgba(200,50,64,.45);color:#a4232e;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+
+/* 窄屏：缩小圆环、去掉引导字。
+   注意 .island-inner 在宽屏是 absolute + left:50%，这种写法下浏览器给它的可用宽度
+   只有容器的一半（562px 容器只剩 281px），内容必然被迫换行 —— 所以窄屏把它改回
+   参与流：条带自己变成 flex 居中容器，药丸 position:static 由它居中。 */
+@media(max-width:620px){
+  .status-island{display:flex;align-items:center;justify-content:center;padding:0 8px}
+  /* 窄屏只去掉「设备状态」四个字，断面留着 —— 它是品牌落款，比一行说明字更该留下 */
+  .island-lead-txt{display:none}
+  /* 触摸屏没有 hover：窄屏直接常驻展开，别让手机用户永远看不到状态台数。
+     这一条必须写在 hover 那三条之后（同特异性、后来居上），否则会被它们盖掉。 */
+  .island-body,
+  .status-island:hover .island-body,
+  .status-island:focus-within .island-body{max-width:100%;margin-left:7px;opacity:1}
+  .island-rope,
+  .status-island:hover .island-rope,
+  .status-island:focus-within .island-rope{width:26px;height:26px}
+  /* 20px 圆环的周长只剩 53px，2.6deg 折合 0.38px —— 会被抗锯齿抹成一层灰雾。
+     这里只调变量就够了：两条背景层都是 `var(--ring-wire)` 驱动的，不必重写 background。 */
+  .island-dot .ring{--ring-wire:rgba(0,0,0,.5);--wire-w:4deg}
+  .island-inner{
+    position:static;
+    transform:none;
+    width:max-content;
+    max-width:100%;
+    padding:4px 10px;      /* 断面与展开内容之间的间距走 .island-body 的 margin-left，
+                              这里不再留 gap，否则会多叠出 7px */
+  }
+  .island-dots{gap:4px}
+  .island-dot{padding:2px}
+  .island-dot .ring,
+  .status-island:hover .island-dot .ring,
+  .status-island:focus-within .island-dot .ring{width:20px;height:20px}
+  .island-dot .ring b,
+  .status-island:hover .island-dot .ring b,
+  .status-island:focus-within .island-dot .ring b{font-size:9px}
+  .island-dot .ring::before{inset:2px}
+  .island-alert{font-size:10px;padding:3px 7px}
+}
+
