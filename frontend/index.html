@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 开发期禁用页面缓存：HTML 本身没有版本号参数，改版后浏览器会一直拿旧副本 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>智能排产指挥台</title>
+    <link rel="icon" type="image/png" href="./jwgs-logo.png?v=2" />
+    <link rel="stylesheet" href="./styles.css?v=57" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-mark" title="君威钢绳索具"><img src="./jwgs-logo.png?v=2" alt="君威钢绳索具" /></div>
+        <div class="brand-name">智能排产<br /><span>指挥台</span></div>
+        <nav class="nav" aria-label="主导航">
+          <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span><span class="nav-label">指挥总览</span></button>
+          <button class="nav-item" data-page="data"><span class="nav-icon">⇅</span><span class="nav-label">数据管理</span></button>
+          <button class="nav-item" data-page="machines"><span class="nav-icon">⌘</span><span class="nav-label">设备态势</span></button>
+          <button class="nav-item" data-page="orders"><span class="nav-icon">□</span><span class="nav-label">订单中心</span></button>
+          <button class="nav-item" data-page="schedule"><span class="nav-icon">▤</span><span class="nav-label">智能排产</span></button>
+          <button class="nav-item" data-page="risks"><span class="nav-icon">△</span><span class="nav-label">风险预警</span></button>
+          <button class="nav-item" data-page="reschedule"><span class="nav-icon">↻</span><span class="nav-label">重排推演</span></button>
+          <button class="nav-item" data-page="archive"><span class="nav-icon">☑</span><span class="nav-label">完工归档</span></button>
+          <button class="nav-item" data-page="analysis"><span class="nav-icon">▦</span><span class="nav-label">数据分析</span></button>
+        </nav>
+        <div class="sidebar-foot">设备 — 台 · 排程 — 条</div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">君威钢绳索具 · 全天连续生产</p>
+            <h1>生产指挥总览</h1>
+          </div>
+          <div class="header-actions">
+            <span class="live-dot">系统在线</span>
+            <span class="shift-tag" id="scheduleTimeContext">北京时间加载中</span>
+            <button id="themeToggle" class="icon-button" title="切换主题">☼</button>
+            <button id="aiAssistantButton" class="ai-assistant-cta">AI排产顾问</button><button id="manualInsertButton" class="manual-insert-cta">人工调序</button><button id="rushInsertButton" class="primary-button" title="填写插单明细后由算法引擎重排">紧急插单</button>
+          </div>
+          <!-- 顶部「产线状态岛」：嵌在吸顶顶栏下沿，常驻不随内容滚动。
+               默认紧凑（只有彩色圆环 + 圈内台数），悬停 / 键盘聚焦展开出状态名。
+               数字全部由 app.js 按真实数据渲染，这里不留任何写死的占位数字。 -->
+          <section class="status-island" id="statusIsland" tabindex="0" aria-label="产线设备状态与紧急提醒：静止态是一枚钢丝绳断面，悬停或聚焦展开各状态台数">
+            <div class="island-inner">
+              <!-- 常驻的「神虎 GT8 断面」：静止态**只有它**，居中浮在顶栏上沿。
+                   其余内容全在 .island-body 里，靠 max-width 0→大 展开/收起。 -->
+              <span class="island-rope" id="islandRope"></span>
+              <div class="island-body">
+                <span class="island-lead-txt">设备状态</span>
+                <div class="island-dots" id="islandDots"></div>
+                <button class="island-alert" id="islandAlert" type="button" hidden></button>
+              </div>
+            </div>
+          </section>
+        </header>
+
+        <div id="dashboardContent">
+        <section class="kpi-grid" aria-label="核心指标">
+          <button class="kpi-card" data-filter="all"><span>准时交付率</span><strong id="onTimeRate">92.4%</strong><em class="good" id="onTimeDelta">↑ 3.2%</em><small>目标 ≥ 90%</small></button>
+          <button class="kpi-card" data-filter="load"><span>产能利用率</span><strong id="utilRate">84.7%</strong><em class="info" id="utilDelta">+ 6.5%</em><small id="deviceTotal">109 台设备</small></button>
+          <button class="kpi-card" data-filter="congested"><span>拥堵设备</span><strong id="congestedCount">3</strong><em class="warning" id="congestedNote">需处理</em><small>高负荷或换型中</small></button>
+          <button class="kpi-card" data-filter="risk"><span>风险订单</span><strong id="riskCount">7</strong><em class="danger" id="riskDelta">2 张临近交期</em><small>点击查看处置建议</small></button>
+        </section>
+
+        <section class="command-grid">
+          <article class="panel twin-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">数字孪生</p><h2>工段设备态势</h2></div>
+              <!-- 状态图例由 app.js 按 STATUS_META 渲染，与顶部状态岛、三维图例共用同一份口径。
+             写死在 HTML 里的话，后端一换状态词表这里就会悄悄少一项。 -->
+        <div class="legend" id="statusLegend"></div>
+            </div>
+            <div id="plantMap" class="plant-map" aria-label="可点击的工段设备态势图"></div>
+          </article>
+
+          <article class="panel trend-panel">
+            <div class="panel-heading"><div><p class="eyebrow">全厂节拍</p><h2>产能与交付趋势</h2></div><span class="period">近 7 天</span></div>
+            <div class="trend-chart" aria-label="近 7 天计划产出柱状图，单位为千克">
+              <div class="trend-unit">产出（kg）</div>
+              <div class="trend-scale"><span>3,200</span><span>2,400</span><span>1,600</span><span>800</span><span>0</span></div>
+              <div class="chart-lines"></div>
+              <div class="bars"><i style="--h:42%"></i><i style="--h:59%"></i><i style="--h:49%"></i><i style="--h:76%"></i><i style="--h:66%"></i><i style="--h:84%"></i><i style="--h:72%"></i></div>
+              <div class="chart-labels"><span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>今日</span></div>
+            </div>
+            <div class="trend-footer"><span><b>2,860</b> 计划产出 kg</span><span><b>97.1%</b> 设备可用率</span></div>
+          </article>
+        </section>
+
+        <section class="panel gantt-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">实时排程</p><h2>设备甘特图</h2></div>
+            <div class="gantt-controls"><div class="schedule-history-picker" aria-label="历史周计划定位"><label for="scheduleMonthSelect"><span>月份</span><select id="scheduleMonthSelect" aria-label="选择计划月份"></select></label><button id="schedulePrevWeek" type="button" aria-label="上一周">‹</button><label for="scheduleWeekSelect"><span>周计划</span><select id="scheduleWeekSelect" aria-label="选择七天周计划"></select></label><button id="scheduleNextWeek" type="button" aria-label="下一周">›</button><label for="scheduleVersionSelect"><span>周内版本</span><select id="scheduleVersionSelect" aria-label="选择周内排程版本"><option value="current">当前计划</option></select></label></div><div class="view-switch" id="ganttSwitch"><button class="selected" data-gantt-view="machine" type="button">设备视角</button><button data-gantt-view="order" type="button">订单视角</button><button data-gantt-process="all" type="button">全部工序</button><button data-gantt-process="拉丝" type="button">拉丝</button><button data-gantt-process="捻股" type="button">捻股</button><button data-gantt-process="合绳" type="button">合绳</button><button data-gantt-risk="1" type="button">仅看风险</button></div></div>
+          </div>
+          <div class="schedule-history-meta" id="scheduleHistoryMeta" hidden></div>
+          <div class="gantt-scroll" aria-label="甘特图时间轴，可横向滚动查看后续预测">
+            <div class="gantt-canvas" id="ganttCanvas">
+              <div class="gantt-header"><span>设备 / 工序</span><span>20:00</span><span>22:00</span><span>00:00</span><span>02:00</span><span>04:00</span><span>06:00</span><span>08:00</span></div>
+              <div id="ganttRows" class="gantt-rows"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bottom-grid">
+          <article class="panel risks-panel"><div class="panel-heading"><div><p class="eyebrow">需人工确认</p><h2>风险预警</h2></div><button class="text-button" data-goto="risks" type="button">查看全部</button></div><div id="riskList" class="risk-list"></div></article>
+          <article class="panel orders-panel"><div class="panel-heading"><div><p class="eyebrow">订单池</p><h2>优先订单</h2></div><button class="text-button" data-goto="orders" type="button">订单中心</button></div><div id="ordersTable" class="orders-table"></div></article>
+        </section>
+        </div>
+        <section id="moduleView" class="module-view" hidden></section>
+      </main>
+
+      <aside class="assistant-panel" id="assistantPanel">
+        <div class="assistant-top"><div class="assistant-icon">✦</div><div><p>DeepSeek V4 · AI排产顾问</p><span>算法引擎主导 · AI策略建议 · 人工可确认</span></div></div>
+        <div id="assistantContent" class="assistant-content"></div>
+        <button id="lockTask" class="assistant-action">锁定当前安排</button>
+      </aside>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script src="./three.min.js"></script>
+    <script src="./xlsx.full.min.js"></script>
+    <script src="./schedule-history-labels.js?v=2"></script>
+    <script src="./app.js?v=86"></script>
+    <script src="./backend-bridge.js?v=13"></script>
+  </body>
+</html>

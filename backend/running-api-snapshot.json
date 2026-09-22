@@ -1,0 +1,840 @@
+{
+  "_note": "本文件由快照脚本生成。F:\\比赛\\黑客松\\后端算法\\server.py（磁盘版）只实现 health/dashboard/analysis/problems/data-summary/replan/priority，而 8765 上运行中的进程还实现了 datasets/upload、datasets/{id}/confirm、schedule/run、schedule/status、delay-policy、device-event。本快照用于在进程失守时重建这批路由。",
+  "captured_at": "2026-09-19T21:10:20.910Z",
+  "openapi": {
+    "openapi": "3.1.0",
+    "info": {
+      "title": "智能排产引擎 V0.3",
+      "version": "0.3.0"
+    },
+    "paths": {
+      "/api/health": {
+        "get": {
+          "summary": "Health",
+          "operationId": "health_api_health_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/datasets/upload": {
+        "post": {
+          "summary": "Upload Dataset",
+          "operationId": "upload_dataset_api_datasets_upload_post",
+          "requestBody": {
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "$ref": "#/components/schemas/Body_upload_dataset_api_datasets_upload_post"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/datasets/{dataset_id}/confirm": {
+        "post": {
+          "summary": "Confirm Dataset",
+          "operationId": "confirm_dataset_api_datasets__dataset_id__confirm_post",
+          "parameters": [
+            {
+              "name": "dataset_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "title": "Dataset Id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/schedule/run": {
+        "post": {
+          "summary": "Run Schedule",
+          "operationId": "run_schedule_api_schedule_run_post",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/schedule/status": {
+        "get": {
+          "summary": "Schedule Status",
+          "operationId": "schedule_status_api_schedule_status_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/dashboard": {
+        "get": {
+          "summary": "Dashboard",
+          "operationId": "dashboard_api_dashboard_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/analysis": {
+        "get": {
+          "summary": "Analysis",
+          "operationId": "analysis_api_analysis_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/problems": {
+        "get": {
+          "summary": "Problems",
+          "operationId": "problems_api_problems_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/data-summary": {
+        "get": {
+          "summary": "Data Summary",
+          "operationId": "data_summary_api_data_summary_get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/replan": {
+        "post": {
+          "summary": "Replan",
+          "operationId": "replan_api_replan_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplanBody"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/priority": {
+        "post": {
+          "summary": "Priority",
+          "operationId": "priority_api_priority_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriorityBody"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/delay-policy": {
+        "post": {
+          "summary": "Delay Policy",
+          "description": "由企业人工导入客户延期容忍度；模型推测来源一律降级为不可延期。",
+          "operationId": "delay_policy_api_delay_policy_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelayPolicyBody"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/device-event": {
+        "post": {
+          "summary": "Device Event",
+          "operationId": "device_event_api_device_event_post",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceEventBody"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {}
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Body_upload_dataset_api_datasets_upload_post": {
+          "properties": {
+            "orders_file": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream",
+              "title": "Orders File"
+            },
+            "rated_file": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream",
+              "title": "Rated File"
+            }
+          },
+          "type": "object",
+          "required": [
+            "orders_file",
+            "rated_file"
+          ],
+          "title": "Body_upload_dataset_api_datasets_upload_post"
+        },
+        "DelayPolicyBody": {
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "title": "Order Id"
+            },
+            "policy": {
+              "type": "string",
+              "title": "Policy",
+              "default": "hard"
+            },
+            "source": {
+              "type": "string",
+              "title": "Source",
+              "default": "enterprise_manual"
+            },
+            "note": {
+              "type": "string",
+              "title": "Note",
+              "default": ""
+            }
+          },
+          "type": "object",
+          "required": [
+            "order_id"
+          ],
+          "title": "DelayPolicyBody"
+        },
+        "DeviceEventBody": {
+          "properties": {
+            "action": {
+              "type": "string",
+              "title": "Action"
+            },
+            "process": {
+              "type": "string",
+              "title": "Process"
+            },
+            "device": {
+              "type": "string",
+              "title": "Device"
+            },
+            "effective_at": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Effective At"
+            },
+            "reason": {
+              "type": "string",
+              "title": "Reason",
+              "default": ""
+            }
+          },
+          "type": "object",
+          "required": [
+            "action",
+            "process",
+            "device",
+            "effective_at"
+          ],
+          "title": "DeviceEventBody"
+        },
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "PriorityBody": {
+          "properties": {
+            "order_id": {
+              "type": "string",
+              "title": "Order Id"
+            },
+            "tier": {
+              "type": "integer",
+              "title": "Tier"
+            }
+          },
+          "type": "object",
+          "required": [
+            "order_id",
+            "tier"
+          ],
+          "title": "PriorityBody"
+        },
+        "ReplanBody": {
+          "properties": {
+            "events": {
+              "items": {},
+              "type": "array",
+              "title": "Events"
+            }
+          },
+          "type": "object",
+          "required": [
+            "events"
+          ],
+          "title": "ReplanBody"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            },
+            "input": {
+              "title": "Input"
+            },
+            "ctx": {
+              "type": "object",
+              "title": "Context"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        }
+      }
+    }
+  },
+  "live": {
+    "/api/health": {
+      "status": 200,
+      "body": {
+        "ok": true,
+        "ready": true,
+        "error": null,
+        "building": false,
+        "progress": 100,
+        "stage": "完成",
+        "dataset_id": "builtin",
+        "built_at": "2026-09-19T22:07:29",
+        "build_seconds": 143.7
+      }
+    },
+    "/api/schedule/status": {
+      "status": 200,
+      "body": {
+        "dataset_id": "builtin",
+        "ready": true,
+        "building": false,
+        "progress": 100,
+        "stage": "完成",
+        "error": null,
+        "algorithm": {
+          "algorithm": "ATC(k=1)+classification+two-stage",
+          "orders_total": 323,
+          "completed_filtered": 11,
+          "unfinished_orders": 312,
+          "valid_orders": 290,
+          "manual_data_orders": 22,
+          "stage2_attempted": 100,
+          "stage2_appended": 100,
+          "atc_k": 1,
+          "processing_hours_median": 178.31120079553574
+        }
+      }
+    },
+    "/api/data-summary": {
+      "status": 200,
+      "body": {
+        "orders_total": 323,
+        "done": 11,
+        "backlog": 33,
+        "spec_parsed": 322,
+        "devices": {
+          "拉丝": 47,
+          "捻股": 50,
+          "合绳": 12
+        },
+        "baseline": "2026-09-06T00:00:00",
+        "window_days": 14
+      }
+    },
+    "/api/dashboard": {
+      "status": 200,
+      "shape": {
+        "machines": {
+          "_array": true,
+          "length": 109,
+          "item0": {
+            "id": "8103",
+            "zone": "拉丝",
+            "status": "idle",
+            "order": "待排",
+            "product": "—",
+            "material": "—",
+            "capacity": "0%",
+            "queue": 0,
+            "change": "—",
+            "risk": "无",
+            "trace": []
+          }
+        },
+        "tasks": {
+          "_array": true,
+          "length": 36,
+          "item0": {
+            "machine": "8127 拉丝",
+            "order": "JW-0811-27",
+            "bars": [
+              {
+                "label": "JW-0803-6",
+                "status": "risk",
+                "order": "2901-202608030001-6-1",
+                "left": 0,
+                "width": 14.711301498594576,
+                "title": "JW-0803-6 · 拉丝 批3\n09-06 00:00 → 09-08 01:25\n[R6] 拉丝完工 09-08 01:25 晚于捻股原排 → 捻股顺延 | [R6] 捻股顺延后合绳批次同步顺延（交接≥2h） | [R2] 拉丝批次 3/8：49.4h（丝量 528kg）"
+              },
+              {
+                "label": "JW-0803-6",
+                "status": "risk",
+                "order": "2901-202608030001-6-1",
+                "left": 14.711301498594576,
+                "width": 14.711301498594576,
+                "title": "JW-0803-6 · 拉丝 批4\n09-08 01:25 → 09-10 02:51\n[R6] 拉丝完工 09-10 02:51 晚于捻股原排 → 捻股顺延 | [R6] 捻股顺延后合绳批次同步顺延（交接≥2h） | [R2] 拉丝批次 4/8：49.4h（丝量 528kg）"
+              },
+              {
+                "label": "换型",
+                "status": "change",
+                "left": 29.422602997189152,
+                "width": 0.4,
+                "title": "换型占用"
+              },
+              {
+                "label": "JW-0731-4",
+                "status": "risk",
+                "order": "2901-202607310001-4-1",
+                "left": 29.720222044808196,
+                "width": 26.163435700148806,
+                "title": "JW-0731-4 · 拉丝 批7\n09-10 03:51 → 09-13 19:46\n[R6] 拉丝完工 09-13 19:46 晚于捻股原排 → 捻股顺延 | [R6] 捻股顺延后合绳批次同步顺延（交接≥2h） | [R2] 拉丝批次 7/12：87.9h（丝量 940kg）"
+              },
+              {
+                "label": "换型",
+                "status": "change",
+                "left": 55.883657744957006,
+                "width": 0.4,
+                "title": "换型占用"
+              },
+              {
+                "label": "JW-0811-27",
+                "status": "risk",
+                "order": "2901-202608110001-27-1",
+                "left": 56.18127679257605,
+                "width": 16.368515828373013,
+                "title": "JW-0811-27 · 拉丝 批1\n09-13 20:46 → 09-16 03:46\n[R1] 设备适配：50mm 6*36WS+IWRC → 捻股 12 台 / 合绳 12  | [DATA] 合绳：结构 6*36WS+IWRC 直接命中产能矩阵 | [DATA] 捻股：股径 16.34mm 命中矩阵行 16.34|1+6+6/6+12 A（股"
+              },
+              {
+                "label": "JW-0811-27",
+                "status": "risk",
+                "order": "2901-202608110001-27-1",
+                "left": 72.54979262094908,
+                "width": 16.368515828373013,
+                "title": "JW-0811-27 · 拉丝 批4\n09-16 03:46 → 09-18 10:45\n[R6] 捻股完工 09-06 00:02 晚于合绳原排 → 合绳批次顺延（交接≥2h） | [R6] 拉丝完工 09-18 10:45 晚于捻股原排 → 捻股顺延 | [R6] 捻股顺延后合绳批次同步顺延（交接≥2h）"
+              },
+              {
+                "label": "JW-0811-27",
+                "status": "risk",
+                "order": "2901-202608110001-27-1",
+                "left": 88.9183084493221,
+                "width": 16.368515828373013,
+                "title": "JW-0811-27 · 拉丝 批6\n09-18 10:45 → 09-20 17:45\n[R6] 捻股完工 09-06 00:02 晚于合绳原排 → 合绳批次顺延（交接≥2h） | [R6] 拉丝完工 09-20 17:45 晚于捻股原排 → 捻股顺延 | [R6] 捻股顺延后合绳批次同步顺延（交接≥2h）"
+              }
+            ]
+          }
+        },
+        "risks": {
+          "_array": true,
+          "length": 12,
+          "item0": {
+            "level": "risk",
+            "order": "2901-202608070001-16-1",
+            "title": "JW-0807-16 预计超期 1.2 天",
+            "text": "交期 09-06，预计完工 09-07 03:58。原因：工序批次排队，产能受限",
+            "time": "预测",
+            "machine": ""
+          }
+        },
+        "orders": {
+          "_array": true,
+          "length": 324,
+          "item0": [
+            "订单号",
+            "产品规格",
+            "数量",
+            "交期",
+            "状态"
+          ]
+        },
+        "kpi": "object",
+        "gantt": "object",
+        "engines": "object",
+        "problems": "object",
+        "dataset": "object"
+      }
+    },
+    "/api/analysis": {
+      "status": 200,
+      "shape": {
+        "totalDevices": "number",
+        "changeoverCount": "number",
+        "changeoverHours": "number",
+        "idleCount": "number",
+        "manualQueue": "number",
+        "utilByProcess": {
+          "_array": true,
+          "length": 3,
+          "item0": {
+            "process": "拉丝",
+            "rate": 0.8193828682011637
+          }
+        },
+        "distribution": {
+          "_array": true,
+          "length": 6,
+          "item0": {
+            "label": "0%",
+            "count": 0
+          }
+        },
+        "topDevices": {
+          "_array": true,
+          "length": 8,
+          "item0": {
+            "code": "8127",
+            "process": "拉丝",
+            "rate": 1
+          }
+        },
+        "reasons": {
+          "_array": true,
+          "length": 5,
+          "item0": {
+            "title": "拉丝为产能瓶颈",
+            "evidence": "拉丝工序利用率 81.9%，拥堵设备集中在拉丝；产能按台账月产量折算（月产 ÷ 30 天 ÷ 24h）",
+            "suggest": "细丝规格订单排快机；评估瓶颈机台提速或增开班次"
+          }
+        },
+        "quality": {
+          "_array": true,
+          "length": 5,
+          "item0": {
+            "process": "2026",
+            "issue": "JWJS20260823-1",
+            "batch": "25/400-5",
+            "cause": "光面钢丝",
+            "fix": "1.77"
+          }
+        },
+        "kpi": "object"
+      }
+    }
+  },
+  "routes": [
+    {
+      "path": "/api/health",
+      "methods": [
+        "get"
+      ],
+      "summary": "Health"
+    },
+    {
+      "path": "/api/datasets/upload",
+      "methods": [
+        "post"
+      ],
+      "summary": "Upload Dataset"
+    },
+    {
+      "path": "/api/datasets/{dataset_id}/confirm",
+      "methods": [
+        "post"
+      ],
+      "summary": "Confirm Dataset"
+    },
+    {
+      "path": "/api/schedule/run",
+      "methods": [
+        "post"
+      ],
+      "summary": "Run Schedule"
+    },
+    {
+      "path": "/api/schedule/status",
+      "methods": [
+        "get"
+      ],
+      "summary": "Schedule Status"
+    },
+    {
+      "path": "/api/dashboard",
+      "methods": [
+        "get"
+      ],
+      "summary": "Dashboard"
+    },
+    {
+      "path": "/api/analysis",
+      "methods": [
+        "get"
+      ],
+      "summary": "Analysis"
+    },
+    {
+      "path": "/api/problems",
+      "methods": [
+        "get"
+      ],
+      "summary": "Problems"
+    },
+    {
+      "path": "/api/data-summary",
+      "methods": [
+        "get"
+      ],
+      "summary": "Data Summary"
+    },
+    {
+      "path": "/api/replan",
+      "methods": [
+        "post"
+      ],
+      "summary": "Replan"
+    },
+    {
+      "path": "/api/priority",
+      "methods": [
+        "post"
+      ],
+      "summary": "Priority"
+    },
+    {
+      "path": "/api/delay-policy",
+      "methods": [
+        "post"
+      ],
+      "summary": "Delay Policy"
+    },
+    {
+      "path": "/api/device-event",
+      "methods": [
+        "post"
+      ],
+      "summary": "Device Event"
+    }
+  ]
+}
